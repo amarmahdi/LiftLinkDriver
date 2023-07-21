@@ -17,9 +17,6 @@ import { ValetProvider } from './src/infrastructure/service/valet/context/valet.
 import { getMainDefinition } from '@apollo/client/utilities'
 import { WebSocketLink } from 'apollo-link-ws'
 
-// const wsLink = new GraphQLWsLink(createClient({
-// 	url: 'ws://192.168.1.94:8000/graphql/',
-// }));
 
 const wsLink = new WebSocketLink({
   uri: 'ws://192.168.2.203:8000/graphql/',
