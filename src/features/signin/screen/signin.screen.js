@@ -7,7 +7,8 @@ import { InputComponent } from '../../../components/input.component'
 import { ButtonComponent } from '../../../components/button.component'
 import { AuthContext } from '../../../infrastructure/service/authentication/context/auth.context'
 import { MainContainer } from '../../../components/main.container.component'
-import styled from 'styled-components'
+import styled from 'styled-components/native'
+import LogOutIcon from '../../../../assets/svgs/logout'
 
 const Container = styled.View`
   flex: 1;
@@ -15,11 +16,11 @@ const Container = styled.View`
   justify-content: center;
   align-items: flex-start;
   width: 100%;
-  padding: 10px;
+  padding: 0px 20px;
 `
 
 const ButtonContainer = styled.View`
-  padding: 10px;
+  padding: 20px;
   width: 100%;
 `
 
@@ -60,6 +61,7 @@ export const SigninScreen = ({ navigation }) => {
             title="Sign In"
             padding="10px"
             onPress={() => onLogin(username, password)}
+            icon={<LogOutIcon width={24} height={24} />}
           />
         </ButtonContainer>
       </MainContainer>

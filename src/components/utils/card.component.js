@@ -1,5 +1,5 @@
 import React from "react";
-import styled from "styled-components";
+import styled from "styled-components/native";
 import { Card } from "react-native-paper";
 import { DateComponent } from "../typography/date.component";
 import { TimeComponent } from "../typography/time.component";

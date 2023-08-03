@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { styled } from 'styled-components'
+import styled from 'styled-components/native'
 import { TextInput } from 'react-native-paper'
 import React from 'react'
 

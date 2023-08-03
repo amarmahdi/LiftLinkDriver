@@ -4,7 +4,7 @@ import React from 'react'
 import { LabelComponent } from '../../../components/typography/label.component'
 import { MainContainer } from '../../../components/main.container.component'
 import { Spacer } from '../../../components/utils/spacer.component'
-import styled from 'styled-components'
+import styled from 'styled-components/native'
 import RedirectIcon from '../../../../assets/svgs/redirect'
 import { Pressable } from 'react-native'
 
@@ -32,7 +32,7 @@ const HomeContainer = styled.View`
   justify-content: flex-start;
   align-items: flex-start;
   width: 100%;
-  padding: 10px;
+  padding: 20px;
 `
 
 const Image = styled.Image`
@@ -72,18 +72,12 @@ const List = styled.FlatList`
 
 export const HomeScreen = ({ navigation }) => {
   return (
-    <MainContainer title="Home" showMenu={true}>
+    <MainContainer
+      title="Amar Mahdi"
+      showGreetings={true}
+    >
       <HomeContainer>
         <Spacer variant="top.large" />
-        <AvatarContainer>
-          <Avatar />
-          <Spacer variant="left.medium" />
-          <UsernameContainer>
-            <LabelComponent>Hello,</LabelComponent>
-            <LabelComponent title={true}>Amar</LabelComponent>
-          </UsernameContainer>
-        </AvatarContainer>
-        <Image source={require('../../../../assets/Map.png')} />
         <LabelComponent>Pending order(s)</LabelComponent>
         <Spacer variant="top.large" />
         <List

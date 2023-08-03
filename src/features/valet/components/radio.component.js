@@ -1,5 +1,5 @@
 import React from "react";
-import styled from "styled-components";
+import styled from "styled-components/native";
 import { LabelComponent as Label } from "../../../components/typography/label.component";
 import { Spacer } from "../../../components/utils/spacer.component";
 import { RadioComponent } from "../../../components/radio.component";

@@ -19,14 +19,14 @@ import { WebSocketLink } from 'apollo-link-ws'
 
 
 const wsLink = new WebSocketLink({
-  uri: 'ws://192.168.2.203:8000/graphql/',
+  uri: 'ws://172.20.7.75:8000/graphql/',
   options: {
     reconnect: true
   }
 })
 
 const httpLink = createHttpLink({
-  uri: 'http://192.168.2.203:8000/graphql/'
+  uri: 'http://172.20.7.75:8000/graphql/'
 })
 
 const authLink = setContext(async ({ headers }) => {
