@@ -7,6 +7,7 @@ import { Spacer } from '../../../components/utils/spacer.component'
 import styled from 'styled-components/native'
 import RedirectIcon from '../../../../assets/svgs/redirect'
 import { Pressable } from 'react-native'
+import { Card } from 'react-native-paper'
 
 const AvatarContainer = styled.View`
   flex-direction: row;
@@ -32,7 +33,6 @@ const HomeContainer = styled.View`
   justify-content: flex-start;
   align-items: flex-start;
   width: 100%;
-  padding: 20px;
 `
 
 const Image = styled.Image`
@@ -70,31 +70,57 @@ const List = styled.FlatList`
   width: 100%;
 `
 
+const ListCard = styled.View`
+  width: ${(props) => (props.theme.buttonSizes.screen.width) / 1.1}px;
+  height: 100px;
+  padding: 20px;
+  margin-bottom: 20px;
+  border-radius: 20px;
+  border-width: 1px;
+  border-color: transparent;
+  background-color: ${(props) => props.theme.colors.bg.primary};
+  shadow-color: ${(props) => props.theme.colors.text.primary};
+  shadow-offset: 0px 1px;
+  shadow-opacity: 1;
+  shadow-radius: 1px;
+  elevation: 5;
+`
+
+const LabelContainer = styled.View`
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 20px;
+`
+
 export const HomeScreen = ({ navigation }) => {
   return (
     <MainContainer
       title="Amar Mahdi"
       showGreetings={true}
+      showAvatar={true}
+      showMenu={true}
     >
       <HomeContainer>
         <Spacer variant="top.large" />
-        <LabelComponent>Pending order(s)</LabelComponent>
-        <Spacer variant="top.large" />
+        <LabelContainer>
+          <LabelComponent>Pending order(s)</LabelComponent>
+        </LabelContainer>
         <List
           data={[1, 2, 3, 4, 5, 6, 7, 8, 9]}
           renderItem={() => (
-            <Pressable onPress={() => navigation.navigate('Valet')}>
+            <Pressable onPress={() => navigation.navigate('Details')}>
               <ListContainer>
-                <ListComponent>
-                  <CarDescription>
-                    <LabelComponent>Genesis G90</LabelComponent>
-                    <LabelComponent title2={true}>Four wheel drive</LabelComponent>
-                  </CarDescription>
-                  <RedirectIcon width={24} height={24} />
-                </ListComponent>
-                <Spacer variant="top.medium" />
-                <Line />
-                <Spacer variant="top.medium" />
+                <ListCard>
+                  <ListComponent>
+                    <CarDescription>
+                      <LabelComponent>Genesis G90</LabelComponent>
+                      <LabelComponent title2={true}>Four wheel drive</LabelComponent>
+                    </CarDescription>
+                    <RedirectIcon width={24} height={24} />
+                  </ListComponent>
+                </ListCard>
               </ListContainer>
             </Pressable>
           )}

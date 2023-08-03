@@ -6,6 +6,7 @@ import Menu from '../../assets/svgs/menu'
 import { Spacer } from './utils/spacer.component'
 import { View, ImageBackground } from 'react-native'
 import { tr } from 'date-fns/locale'
+import { AvatarComponent } from './utils/avatar.component'
 
 const BodyTitleSection = styled.View`
     flex-direction: row;
@@ -46,53 +47,21 @@ const HeaderBackground = styled.View`
   width: 100%;
   height: 180px;
   flex-direction: row;
-`
-
-const LogoSubText = styled.Text`
-  color: ${(props) => props.theme.colors.text.inverse};
-  font-size: ${(props) => props.theme.fontSizes.body};
-  font-family: ${(props) => props.theme.fonts.body};
-`
-
-const GreetingContainer = styled.View`
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: flex-start;
-`
-
-const GreetingsText = styled.Text`
-  color: ${(props) => props.theme.colors.text.inverse};
-  font-size: ${(props) => props.theme.fontSizes.body};
-  font-family: ${(props) => props.theme.fonts.date};
-`
-
-const Avatar = styled.View`
-  width: 54px;
-  height: 54px;
-  border-radius: 20px;
-  background-color: ${(props) => props.theme.colors.brand.primary};
-`
-
-const AvatarContainer = styled.View`
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: center;
-  gap: ${(props) => props.theme.space[3]};
+  z-index: 1;
 `
 
 export const MainContainer = ({
   children,
   title = 'Enhance the Luxury Evolution.',
-  showMenu = true,
+  showMenu = false,
   showLogo = false,
   showGreetings = false,
-  showAvatar = true,
+  showAvatar = false,
   styles
 }) => {
   return (
     <Container styles={styles}>
       <HeaderBackground>
-
         {showLogo && <BodyTitleSection>
           <LogoSection>
             {/* <Logo width={32} height={30} /> */}
@@ -100,26 +69,8 @@ export const MainContainer = ({
             <LogoTextDark>Link</LogoTextDark>
           </LogoSection>
         </BodyTitleSection>}
-        {showAvatar && <AvatarContainer>
-          <Avatar>
-            <ImageBackground
-              source={require('../../assets/bannerImg.png')}
-              style={{
-                width: '100%',
-                height: '100%',
-                borderRadius: 20,
-                overflow: 'hidden',
-                resizeMode: 'cover'
-              }}
-            />
-          </Avatar>
-          {showGreetings && <>
-            <GreetingContainer>
-              <GreetingsText>Hello,</GreetingsText>
-              <LogoSubText>{title}</LogoSubText>
-            </GreetingContainer>
-          </>}
-        </AvatarContainer>}
+
+        {showAvatar && <AvatarComponent showGreetings={showGreetings} fullName='Amar Mahdi' />}
         {showMenu && <Menu width={32} height={32} />}
       </HeaderBackground>
       {children}
