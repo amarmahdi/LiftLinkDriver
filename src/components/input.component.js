@@ -9,6 +9,8 @@ const InputField = styled(TextInput)`
     border-width: 1px;
     border-color: ${(props) => props.theme.colors.formColors.border};
     width: 100%;
+    height: ${(props) => props.height || '60px'};
+    max-height: ${(props) => props.height || '60px'};
 `
 
 export const InputComponent = ({ ...props }) => {
@@ -20,6 +22,7 @@ export const InputComponent = ({ ...props }) => {
       underlineColor="transparent"
       textColor="black"
       cursorColor="black"
+      placeholderTextColor={(props) => props.theme.colors.formColors.border}
       secureTextEntry={props.secure}
       {...props}
     />

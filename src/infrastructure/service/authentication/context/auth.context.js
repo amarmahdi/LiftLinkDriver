@@ -1,6 +1,7 @@
 import React, { useState, createContext, useEffect } from "react";
-import { useMutation } from "@apollo/client";
+import { useLazyQuery, useMutation } from "@apollo/client";
 import { Login, Logout } from "../../mutation";
+import { IS_AUTHENTICATED } from "../../query";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const AuthContext = createContext();
@@ -10,30 +11,26 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(false);
   const [err, setError] = useState(null);
-  const [login, { loadging, error, data }] = useMutation(Login);
+  const [login, { loading: loginLoading }] = useMutation(Login);
+  const [isAuthenticatedQuery] = useLazyQuery(IS_AUTHENTICATED);
   const [logout] = useMutation(Logout);
 
-
   const onLogin = async (username, password) => {
-    setLoading(loadging);
-    login({ variables: { username, password } })
-      .then(async ({ data }) => {
-        setUser(data.login.user);
-        try {
-          await AsyncStorage.setItem("token", data.login.token);
-          setIsAuthenticated(true);
-          setLoading(false);
-        } catch (error) {
-          setError(error);
-          setLoading(false);
-        }
-      }).catch(async (e) => {
-        setError(error);
-        setLoading(false);
-        console.log("e", e)
-      });
+    setLoading(true);
+    try {
+      const { data } = await login({ variables: { username, password } });
+      setUser(data.login.user);
+      await AsyncStorage.setItem("token", data.login.token);
+      setIsAuthenticated(true);
+      setLoading(loginLoading);
+      return data;
+    } catch (error) {
+      setError(error);
+      setLoading(false);
+      console.log("error", error.message);
+      throw error;
+    }
   };
-
   const onLogout = async () => {
     await logout();
     setUser(null);
@@ -41,12 +38,34 @@ export const AuthProvider = ({ children }) => {
     await AsyncStorage.removeItem("token");
   };
 
-  useEffect(() => {
-    AsyncStorage.getItem("token").then((result) => {
-      if (result) {
-        setIsAuthenticated(true);
+  const checkAuth = async () => {
+    setLoading(true);
+    try {
+      const token = await AsyncStorage.getItem("token");
+      if (token) {
+        const {
+          data: { isLoggedIn },
+        } = await isAuthenticatedQuery();
+        if (isLoggedIn) {
+          setIsAuthenticated(true);
+          setError(null);
+        } else {
+          setIsAuthenticated(false);
+          setError(null);
+          AsyncStorage.clear();
+        }
       }
-    });
+    } catch (error) {
+      // console.error("Error checking authentication:", error);
+      setIsAuthenticated(false);
+      setError(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    checkAuth();
   }, []);
 
   return (
@@ -58,9 +77,9 @@ export const AuthProvider = ({ children }) => {
         isAuthenticated,
         onLogin,
         onLogout,
-      }}>
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
-}
-
+};

@@ -23,7 +23,8 @@ export const colors = {
     disabled: '#9C9C9C',
     inverse: '#FFFFFF',
     error: '#D0421B',
-    success: '#138000'
+    success: '#138000',
+    green: '#72AB82'
   },
   darkUI: {
     primary: '#1A1D26',
@@ -48,7 +49,7 @@ export const colors = {
   },
   formColors: {
     primary: '#2E2C2F',
-    border: '#2E2C2F',
+    border: 'rgba(46, 44, 47, 0.4)',
     secondary: '#F1F1F1',
     tertiary: '#262626',
     quaternary: '#000000',
@@ -64,5 +65,15 @@ export const colors = {
     disabled: '#9C9C9C',
     error: '#D0421B',
     success: '#138000'
-  }
+  }, 
+  buttonColors: {
+    primary: '#63A375',
+    secondary: '#F1F1F1',
+    tertiary: '#262626',
+    quaternary: '#000000',
+    disabled: '#9C9C9C',
+    error: '#D0421B',
+    success: '#138000'
+  },
+  error: '#D0421B',
 }

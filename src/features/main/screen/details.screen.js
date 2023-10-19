@@ -79,7 +79,7 @@ const DateContainer = styled.View`
 `;
 
 
-export const DetailsScreen = () => {
+export const DetailsScreen = ({ navigation }) => {
   return (
     <MainContainer showAvatar={true} showMenu={true}>
       <ScrollViewContainer vertical={true}>
@@ -143,7 +143,7 @@ export const DetailsScreen = () => {
             <Spacer variant="top.large" />
             <ButtonComponent
               title="Valet Car Details"
-              onPress={() => console.log('Accept')}
+              onPress={() => navigation.navigate("Valet")}
             />
             <Spacer variant="top.large" />
             <Spacer variant="top.large" />
