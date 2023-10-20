@@ -29,10 +29,13 @@ import { OrdersProvider } from "./src/infrastructure/service/orders/context/orde
 import { SERVER_URL } from "@env";
 
 // AsyncStorage.clear();
+const tunnel = false;
 
 const wsLink = new GraphQLWsLink(
   createClient({
-    url: "wss://c2ce-198-161-203-4.ngrok-free.app/graphql/",
+    url: tunnel
+      ? "wss://c2ce-198-161-203-4.ngrok-free.app/graphql/"
+      : "http://192.168.1.94:8000/graphql/",
     on: {
       connected: () => console.log("ws connected"),
       error: (e) => console.log("ws error", e),
@@ -53,8 +56,6 @@ const wsLink = new GraphQLWsLink(
     },
   })
 );
-
-const tunnel = true;
 
 const httpLink = createHttpLink({
   uri: tunnel
@@ -110,6 +111,9 @@ export default function App() {
     "PPMori-ExtraLight": require("./assets/fonts/PPMori/PPMori-Extralight.otf"),
     "PPMori-SemiBold": require("./assets/fonts/PPMori/PPMori-SemiBold.otf"),
     "PPMori-Regular": require("./assets/fonts/PPMori/PPMori-Regular.otf"),
+    "Neue-bold": require("./assets/fonts/neue-haas-grotesk-display-pro-cufonfonts/NeueHaasDisplayBold.ttf"),
+    "Neue-medium": require("./assets/fonts/neue-haas-grotesk-display-pro-cufonfonts/NeueHaasDisplayMediu.ttf"),
+    "Neue-black": require("./assets/fonts/neue-haas-grotesk-display-pro-cufonfonts/NeueHaasDisplayBlack.ttf"),
   });
 
   if (!loaded) {

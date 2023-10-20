@@ -87,7 +87,7 @@ export const Splash = ({ navigation }) => {
       }, 2000);
     } else if (!isAuthenticated && Object.keys(profile).length === 0 && !err) {
       setTimeout(() => {
-        navigation.navigate("SigninNavigation");
+        navigation.navigate("AuthNavigation");
       }, 2000);
     }
   };

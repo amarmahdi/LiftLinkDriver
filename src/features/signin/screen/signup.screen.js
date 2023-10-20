@@ -20,11 +20,6 @@ const Container = styled.View`
   width: 100%;
 `;
 
-const ButtonContainer = styled.View`
-  padding-top: 20px;
-  width: 100%;
-`;
-
 const ErrorText = styled.Text`
   color: ${(props) => props.theme.colors.ui.error};
   font-size: ${(props) => props.theme.fontSizes.caption};
@@ -85,7 +80,8 @@ export const SigninScreen = ({ navigation }) => {
   return (
     <>
       <Container>
-        <Spacer variant="top.large" />
+        <Spacer variant="top.medium" />
+        <Spacer variant="top.medium" />
         <LabelFormComponent size={"100%"}>Username</LabelFormComponent>
         <Spacer variant="top.xsmall" />
         <InputComponent
@@ -126,6 +122,19 @@ export const SigninScreen = ({ navigation }) => {
         <Spacer variant="top.medium" />
         <Spacer variant="top.medium" />
       </Container>
+      <ButtonContainer>
+        <ButtonComponent
+          title="Sign In"
+          onPress={() => {
+            if (username.length === 0) setUsernameError(true);
+            if (password.length === 0) setPasswordError(true);
+            if (!usernameError && !passwordError) handleLogin();
+          }}
+          loading={loadingState}
+        />
+        {/* <LogOutIcon isIcon={true} width={24} height={24} /> */}
+        <LabelComponent inverted={true}>hello</LabelComponent>
+      </ButtonContainer>
     </>
   );
 };

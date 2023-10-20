@@ -14,6 +14,7 @@ export const AuthProvider = ({ children }) => {
   const [login, { loading: loginLoading }] = useMutation(Login);
   const [isAuthenticatedQuery] = useLazyQuery(IS_AUTHENTICATED);
   const [logout] = useMutation(Logout);
+  const [screen, setScreen] = useState("signin");
 
   const onLogin = async (username, password) => {
     setLoading(true);
@@ -77,6 +78,8 @@ export const AuthProvider = ({ children }) => {
         isAuthenticated,
         onLogin,
         onLogout,
+        screen,
+        setScreen,
       }}
     >
       {children}
