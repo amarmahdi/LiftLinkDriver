@@ -5,12 +5,11 @@ import { GET_USER_INFO } from "../../query";
 export const DriverContext = createContext();
 
 export const DriverProvider = ({ children }) => {
+  const [screen, setScreen] = useState("phoneVerification");
   const [profile, setProfile] = useState({});
   const [loading, setLoading] = useState(true);
-  const [
-    getUserData,
-    { data, loading: loadingDriver, error: errorDriver },
-  ] = useLazyQuery(GET_USER_INFO);
+  const [getUserData, { data, loading: loadingDriver, error: errorDriver }] =
+    useLazyQuery(GET_USER_INFO);
 
   const importUserData = async () => {
     if (!loadingDriver && data) {
@@ -41,7 +40,9 @@ export const DriverProvider = ({ children }) => {
   }, [loadingDriver]);
 
   return (
-    <DriverContext.Provider value={{ profile, loading, getUserData }}>
+    <DriverContext.Provider
+      value={{ profile, loading, getUserData, screen, setScreen }}
+    >
       {children}
     </DriverContext.Provider>
   );

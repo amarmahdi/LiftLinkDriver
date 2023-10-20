@@ -1,5 +1,20 @@
 import { gql } from "graphql-tag";
 
+export const Signup = gql`
+  mutation ($input: UserInput!) {
+    register(input: $input) {
+      token
+      user {
+        accountType
+        profilePicture {
+          pictureId
+          pictureLink
+        }
+      }
+    }
+  }
+`;
+
 export const Login = gql`
   mutation ($password: String!, $username: String!) {
     login(password: $password, username: $username) {

@@ -54,7 +54,7 @@ export const colors = {
     tertiary: '#262626',
     quaternary: '#000000',
     disabled: '#9C9C9C',
-    error: '#D0421B',
+    error: 'rgba(251, 26, 83, 0.4)',
     success: '#138000'
   },
   formDarkColors: {

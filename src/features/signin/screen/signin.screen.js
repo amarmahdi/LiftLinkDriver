@@ -1,16 +1,9 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useContext } from "react";
 import styled from "styled-components/native";
-import { Alert } from "react-native";
 import { AuthContext } from "../../../infrastructure/service/authentication/context/auth.context";
-import { MainContainer } from "../../../components/main.container.component";
-import {
-  LabelComponent,
-  LabelFormComponent,
-} from "../../../components/typography";
+import { LabelFormComponent } from "../../../components/typography";
 import { Spacer } from "../../../components/utils/spacer.component";
 import { InputComponent } from "../../../components/input.component";
-import { ButtonComponent } from "../../../components/button.component";
-import LogOutIcon from "../../../../assets/svgs/logout";
 
 const Container = styled.View`
   flex: 1;
@@ -20,67 +13,22 @@ const Container = styled.View`
   width: 100%;
 `;
 
-const ButtonContainer = styled.View`
-  padding-top: 20px;
-  width: 100%;
-`;
-
 const ErrorText = styled.Text`
   color: ${(props) => props.theme.colors.ui.error};
   font-size: ${(props) => props.theme.fontSizes.caption};
 `;
 
-const LabelContainer = styled.View`
-  width: 100%;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-`;
-
 export const SigninScreen = ({ navigation }) => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [usernameError, setUsernameError] = useState(false);
-  const [passwordError, setPasswordError] = useState(false);
-  const { isAuthenticated, onLogin, loading, err } = useContext(AuthContext);
-  const [loadingState, setLoadingState] = useState(true);
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      navigation.navigate("MainNavigation");
-    }
-  }, [isAuthenticated]);
-
-  const handleLogin = async () => {
-    try {
-      const data = await onLogin(username, password);
-      console.log("data", data);
-    } catch (error) {
-      Alert.alert("Alert!", "Failed to login. Please try again.");
-    }
-  };
-
-  useEffect(() => {
-    if (!loading) {
-      setLoadingState(false);
-    }
-    if (err) {
-      setLoadingState(false);
-    }
-    if (usernameError || passwordError) {
-      setLoadingState(false);
-    }
-    if (loading) {
-      setLoadingState(true);
-    }
-  }, [loading]);
-
-  useEffect(() => {
-    if (err) {
-      Alert.alert("Alert!", "Failed to login. Please try again.");
-      setLoadingState(false);
-    }
-  }, [err]);
+  const {
+    username,
+    setUsername,
+    password,
+    setPassword,
+    usernameError,
+    setUsernameError,
+    passwordError,
+    setPasswordError,
+  } = useContext(AuthContext);
 
   return (
     <>
@@ -99,7 +47,7 @@ export const SigninScreen = ({ navigation }) => {
             }
             setUsername(text);
           }}
-          error={usernameError}
+          isError={usernameError}
         />
         {usernameError && <ErrorText>Username required</ErrorText>}
         <Spacer variant="top.small" />
@@ -118,7 +66,7 @@ export const SigninScreen = ({ navigation }) => {
             setPassword(text);
           }}
           secure
-          error={passwordError}
+          isError={passwordError}
         />
         {passwordError && <ErrorText>Password Required</ErrorText>}
         <Spacer variant="top.xsmall" />

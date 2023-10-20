@@ -32,56 +32,30 @@ const LabelContainer = styled.View`
   align-items: center;
 `;
 
-export const SigninScreen = ({ navigation }) => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [usernameError, setUsernameError] = useState(false);
-  const [passwordError, setPasswordError] = useState(false);
-  const { isAuthenticated, onLogin, loading, err } = useContext(AuthContext);
-  const [loadingState, setLoadingState] = useState(true);
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      navigation.navigate("MainNavigation");
-    }
-  }, [isAuthenticated]);
-
-  const handleLogin = async () => {
-    try {
-      const data = await onLogin(username, password);
-      console.log("data", data);
-    } catch (error) {
-      Alert.alert("Alert!", "Failed to login. Please try again.");
-    }
-  };
-
-  useEffect(() => {
-    if (!loading) {
-      setLoadingState(false);
-    }
-    if (err) {
-      setLoadingState(false);
-    }
-    if (usernameError || passwordError) {
-      setLoadingState(false);
-    }
-    if (loading) {
-      setLoadingState(true);
-    }
-  }, [loading]);
-
-  useEffect(() => {
-    if (err) {
-      Alert.alert("Alert!", "Failed to login. Please try again.");
-      setLoadingState(false);
-    }
-  }, [err]);
+export const SignupScreen = ({ navigation }) => {
+  const {
+    isAuthenticated,
+    onLogin,
+    loading,
+    err,
+    username,
+    setUsername,
+    password,
+    setPassword,
+    usernameError,
+    setUsernameError,
+    passwordError,
+    setPasswordError,
+    email,
+    setEmail,
+    emailError,
+    setEmailError,
+  } = useContext(AuthContext);
 
   return (
     <>
       <Container>
-        <Spacer variant="top.medium" />
-        <Spacer variant="top.medium" />
+        <Spacer variant="top.large" />
         <LabelFormComponent size={"100%"}>Username</LabelFormComponent>
         <Spacer variant="top.xsmall" />
         <InputComponent
@@ -95,9 +69,27 @@ export const SigninScreen = ({ navigation }) => {
             }
             setUsername(text);
           }}
-          error={usernameError}
+          isError={usernameError}
         />
         {usernameError && <ErrorText>Username required</ErrorText>}
+        <Spacer variant="top.small" />
+        <Spacer variant="top.small" />
+        <LabelFormComponent size={"100%"}>Email</LabelFormComponent>
+        <Spacer variant="top.xsmall" />
+        <InputComponent
+          value={email}
+          onChangeText={(text) => {
+            if (text.length === 0) {
+              setEmailError(true);
+            }
+            if (text.length > 0 && emailError) {
+              setEmailError(false);
+            }
+            setEmail(text);
+          }}
+          isError={emailError}
+        />
+        {emailError && <ErrorText>Email required</ErrorText>}
         <Spacer variant="top.small" />
         <Spacer variant="top.small" />
         <LabelFormComponent>Password</LabelFormComponent>
@@ -114,7 +106,7 @@ export const SigninScreen = ({ navigation }) => {
             setPassword(text);
           }}
           secure
-          error={passwordError}
+          isError={passwordError}
         />
         {passwordError && <ErrorText>Password Required</ErrorText>}
         <Spacer variant="top.xsmall" />
@@ -122,19 +114,6 @@ export const SigninScreen = ({ navigation }) => {
         <Spacer variant="top.medium" />
         <Spacer variant="top.medium" />
       </Container>
-      <ButtonContainer>
-        <ButtonComponent
-          title="Sign In"
-          onPress={() => {
-            if (username.length === 0) setUsernameError(true);
-            if (password.length === 0) setPasswordError(true);
-            if (!usernameError && !passwordError) handleLogin();
-          }}
-          loading={loadingState}
-        />
-        {/* <LogOutIcon isIcon={true} width={24} height={24} /> */}
-        <LabelComponent inverted={true}>hello</LabelComponent>
-      </ButtonContainer>
     </>
   );
 };
