@@ -54,7 +54,7 @@ export const MainScreen = ({ navigation }) => {
   };
 
   const changePage = async () => {
-    if (isObjEmpty(profile.profilePicture) && !userContextLoading) {
+    if (!profile.isVerified || isObjEmpty(profile.profilePicture) && !userContextLoading) {
       navigation.navigate("Profile");
     } else {
       navigation.navigate("Home");

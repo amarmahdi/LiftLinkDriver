@@ -1,4 +1,5 @@
 import { initializeApp, getApp, getApps } from "firebase/app";
+import { PhoneAuthProvider, getAuth } from "firebase/auth"
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { getStorage } from "firebase/storage";
 import {
@@ -12,7 +13,7 @@ import {
 } from "@env";
 
 // Initialize Firebase
-const firebaseConfig = {
+export const firebaseConfig = {
   apiKey: FIREBASE_API_KEY,
   authDomain: FIREBASE_AUTH_DOMAIN,
   projectId: FIREBASE_PROJECT_ID,
@@ -28,14 +29,8 @@ if (getApps().length === 0) {
 
 const fbApp = getApp();
 const storage = getStorage();
+const fbAuth = getAuth(fbApp);
 
-/**
- * Uploads a file to Firebase Storage.
- * @param {string} blob - The file to upload.
- * @param {string} path - The path to upload the file to.
- * @param {function} onProgress - A callback function to track the upload progress.
- * @returns {Promise} A promise that resolves with the download URL and metadata of the uploaded file.
- */
 const uploadToFirebase = async (blob, path, onProgress) => {
   const response = await fetch(blob);
   const blobData = await response.blob();
@@ -69,4 +64,13 @@ const uploadToFirebase = async (blob, path, onProgress) => {
   });
 };
 
-export { storage, fbApp, uploadToFirebase };
+const fbOtp = async (phone, recaptchaVerifier) => {
+  const phoneProvider = new PhoneAuthProvider(fbAuth);
+  const verificationId = await phoneProvider.verifyPhoneNumber(
+    phone,
+    recaptchaVerifier.current
+  );
+  return verificationId;
+}
+
+export { storage, fbApp, uploadToFirebase, fbAuth, fbOtp };

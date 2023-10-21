@@ -7,7 +7,7 @@ import {
   ValetContext,
   ValetStatus,
 } from "../../../infrastructure/service/valet/context/valet.context";
-import { DriverProfileContext } from "../../../infrastructure/service/driver/context/driver.profile.context";
+// import { DriverProfileContext } from "../../../infrastructure/service/driver/context/driver.profile.context";
 import { colors } from "../../../infrastructure/theme/colors";
 import SliderIcon from "../../../../assets/svgs/slider_icon";
 import DestinationIcon from "../../../../assets/svgs/destinationIcon";
@@ -26,6 +26,7 @@ import LogoSvg from "../../../../assets/svgs/logoLoadingIndicator";
 import { format } from "date-fns";
 import MapViewDirections from "react-native-maps-directions";
 import set from "date-fns/fp/set/index.js";
+import { DriverContext } from "../../../infrastructure/service/driver/context/driver.context";
 
 const BottomOverflowContainer = styled.View`
   width: 100%;
@@ -155,7 +156,7 @@ export const MapScreen = ({ navigation }) => {
     setUserType,
     onStartValet,
   } = useContext(ValetContext);
-  const { profile } = useContext(DriverProfileContext);
+  const { profile } = useContext(DriverContext);
   const [loading, setLoading] = useState(true);
   const [started, setStarted] = useState(false);
   const [swipeText, setSwipeText] = useState("Swipe up to view details");

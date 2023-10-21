@@ -4,6 +4,7 @@ export const GET_USER_INFO = gql`
   query {
     getUserInfo {
       accountType
+      isVerified
       address {
         addressId
         city
@@ -56,6 +57,7 @@ export const GET_USER_INFO_BY_ID = gql`
   query ($userId: String!) {
     getUserInfoById(userId: $userId) {
       accountType
+      isVerified
       address {
         addressId
         city

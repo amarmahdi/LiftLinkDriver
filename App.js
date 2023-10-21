@@ -23,7 +23,7 @@ import { createClient } from "graphql-ws";
 import { getMainDefinition } from "@apollo/client/utilities";
 import { WebSocketLink } from "apollo-link-ws";
 import { DriverProvider } from "./src/infrastructure/service/driver/context/driver.context";
-import { DriverProfileProvider } from "./src/infrastructure/service/driver/context/driver.profile.context";
+// import { DriverProfileProvider } from "./src/infrastructure/service/driver/context/driver.profile.context";
 import { ConfirmationProvider } from "./src/infrastructure/service/confirmation/context/confirmation.context";
 import { OrdersProvider } from "./src/infrastructure/service/orders/context/orders.context";
 import { SERVER_URL } from "@env";
@@ -34,7 +34,7 @@ const tunnel = false;
 const wsLink = new GraphQLWsLink(
   createClient({
     url: tunnel
-      ? "wss://c2ce-198-161-203-4.ngrok-free.app/graphql/"
+      ? "wss://ef50-198-161-203-4.ngrok-free.app/graphql/"
       : "http://192.168.1.94:8000/graphql/",
     on: {
       connected: () => console.log("ws connected"),
@@ -59,7 +59,7 @@ const wsLink = new GraphQLWsLink(
 
 const httpLink = createHttpLink({
   uri: tunnel
-    ? "https://c2ce-198-161-203-4.ngrok-free.app/graphql/"
+    ? "https://ef50-198-161-203-4.ngrok-free.app/graphql/"
     : "http://192.168.1.94:8000/graphql/",
 });
 
@@ -132,15 +132,15 @@ export default function App() {
         <SafeAreaComponent>
           <AuthProvider>
             <DriverProvider>
-              <DriverProfileProvider>
-                <ConfirmationProvider>
-                  <OrdersProvider>
-                    <ValetProvider>
-                      <Navigator />
-                    </ValetProvider>
-                  </OrdersProvider>
-                </ConfirmationProvider>
-              </DriverProfileProvider>
+              {/* <DriverProfileProvider> */}
+              <ConfirmationProvider>
+                <OrdersProvider>
+                  <ValetProvider>
+                    <Navigator />
+                  </ValetProvider>
+                </OrdersProvider>
+              </ConfirmationProvider>
+              {/* </DriverProfileProvider> */}
             </DriverProvider>
           </AuthProvider>
         </SafeAreaComponent>

@@ -13,7 +13,7 @@ import { ImageContainerContext } from "../utils/imageObjectContainer";
 import { InputComponent } from "../../../components/input.component";
 import { LabelFormComponent } from "../../../components/typography/label.form.component";
 import { isObjEmpty } from "../../main/screen/main.screen";
-import { DriverProfileContext } from "../../../infrastructure/service/driver/context/driver.profile.context";
+// import { DriverProfileContext } from "../../../infrastructure/service/driver/context/driver.profile.context";
 import { ValetContext, ValetStatus } from "../../../infrastructure/service/valet/context/valet.context";
 import { uploadToFirebase } from "../../../../firebase-config";
 // import { Add_CAR_INFO } from "../../../infrastructure/service/mutation";
@@ -21,6 +21,7 @@ import { uploadToFirebase } from "../../../../firebase-config";
 import UploadProgress from "../../../../assets/svgs/upload_progress";
 import { OverlayComponent } from "../../../components/overlay.component";
 import LogoSvg from "../../../../assets/svgs/logoLoadingIndicator";
+import { DriverContext } from "../../../infrastructure/service/driver/context/driver.context";
 
 const Container = styled.View`
   flex-direction: column;
@@ -114,7 +115,7 @@ export const ValetLoanerScreen = ({ navigation }) => {
   const [rimgError, setrImgError] = useState(false);
   const [mileageError, setMileageError] = useState(false);
   const [gasLevelError, setGasLevelError] = useState(false);
-  const { profile } = useContext(DriverProfileContext);
+  const { profile } = useContext(DriverContext);
   const { front, back, left, right, clearall } = useContext(
     ImageContainerContext
   );

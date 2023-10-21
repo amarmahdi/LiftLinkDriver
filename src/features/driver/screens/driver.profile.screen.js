@@ -8,11 +8,12 @@ import { Container } from "../../../components/utils/container.component";
 import { ButtonComponent } from "../../../components/button.component";
 import * as ImagePicker from "expo-image-picker";
 import { uploadToFirebase } from "../../../../firebase-config";
-import { DriverProfileContext } from "../../../infrastructure/service/driver/context/driver.profile.context";
+// import { DriverProfileContext } from "../../../infrastructure/service/driver/context/driver.profile.context";
 import { useMutation } from "@apollo/client";
 import { UPLOAD_PROFILE_PICTURE } from "../../../infrastructure/service/mutation";
 import { CamCardComponent } from "../components/camera.card.component";
 import { ImageContainerContext } from "../utils/imageObjectContainer";
+import { DriverContext } from "../../../infrastructure/service/driver/context/driver.context";
 
 const ScrollViewContainer = styled.ScrollView`
   margin: 0;
@@ -68,7 +69,7 @@ const PositionedButtonComponent = styled(ButtonComponent)`
 `;
 
 export const DriverProfileScreen = ({ navigation }) => {
-  const { profile, profileLoading } = useContext(DriverProfileContext);
+  const { profile, setProfile } = useContext(DriverContext);
   const { imageObject, clearImageObject } = useContext(ImageContainerContext);
   const [uploadImage] = useMutation(UPLOAD_PROFILE_PICTURE);
   const [progress, setProgress] = useState(0);
@@ -79,7 +80,6 @@ export const DriverProfileScreen = ({ navigation }) => {
     const fileName = imageObject[imageKey].substring(
       imageObject[imageKey].lastIndexOf("/") + 1
     );
-    // console.log(imageObject, "fileName");
     try {
       const data = await uploadToFirebase(
         imageObject[imageKey],
@@ -88,16 +88,19 @@ export const DriverProfileScreen = ({ navigation }) => {
           setProgress(progress);
         }
       );
-      //   console.log("data", data);
 
       await uploadImage({
         variables: {
           pictureLink: data.url,
         },
       })
-        .then(() => {
+        .then(({ data: { uploadProfilePicture } }) => {
+          setProfile({
+            ...profile,
+            profilePicture: uploadProfilePicture,
+          });
           clearImageObject();
-          navigation.navigate("MainNavigation");
+          navigation.navigate("Home");
         })
         .catch((error) => {
           console.log(error, "error from uploadImage#############");
@@ -116,10 +119,6 @@ export const DriverProfileScreen = ({ navigation }) => {
           alignItems: "flex-start",
         }}
       >
-        <Spacer variant="top.large" />
-        <Label title2={true}>
-          Enter the required information mentioned down below.
-        </Label>
         <Spacer variant="top.medium" />
         <Label>Profile Image</Label>
         <Label>{progress.toLocaleString(1)}</Label>
@@ -139,7 +138,7 @@ export const DriverProfileScreen = ({ navigation }) => {
             ) {
               await handleUpload();
             } else {
-              setPage("DriverCarInfo");
+              navigation.navigate("Home");
               clearImageObject();
             }
           }}

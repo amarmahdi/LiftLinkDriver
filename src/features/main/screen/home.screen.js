@@ -19,7 +19,7 @@ import RedirectIcon from "../../../../assets/svgs/redirect";
 import CalendarSvg from "../../../../assets/svgs/calendar";
 import { colors } from "../../../infrastructure/theme/colors";
 import { ConfirmationContext } from "../../../infrastructure/service/confirmation/context/confirmation.context";
-import { DriverProfileContext } from "../../../infrastructure/service/driver/context/driver.profile.context";
+// import { DriverProfileContext } from "../../../infrastructure/service/driver/context/driver.profile.context";
 import { OrdersContext } from "../../../infrastructure/service/orders/context/orders.context";
 import { OrderConfirmationContext } from "../../../infrastructure/service/confirmation/context/order.confirmation.context";
 import { ButtonComponent } from "../../../components/button.component";
@@ -28,6 +28,7 @@ import {
   ValetContext,
   ValetStatus,
 } from "../../../infrastructure/service/valet/context/valet.context";
+import { DriverContext } from "../../../infrastructure/service/driver/context/driver.context";
 
 const HomeContainer = styled.ScrollView`
   width: 100%;
@@ -172,7 +173,7 @@ const ButtonContainer = styled.View`
 `;
 
 export const HomeScreen = ({ navigation }) => {
-  const { profile } = useContext(DriverProfileContext);
+  const { profile } = useContext(DriverContext);
   const {
     getRequests,
     error,
@@ -456,7 +457,7 @@ export const HomeScreen = ({ navigation }) => {
         <ButtonComponent
           title="View Confirmed Orders"
           onPress={() => navigation.navigate("ConfirmedOrders")}
-          background={colors.buttonColors.quaternary}
+          background={colors.buttonColors.tertiary}
         />
       </ButtonContainer>
     </MainContainer>

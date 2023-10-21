@@ -27,6 +27,12 @@ export const AuthProvider = ({ children }) => {
   const [phone, setPhone] = useState("");
   const [phoneError, setPhoneError] = useState(false);
 
+  // names 
+  const [firstName, setfirstName] = useState("");
+  const [firstNameError, setfirstNameError] = useState(false);
+  const [lastName, setlastName] = useState("");
+  const [lastNameError, setlastNameError] = useState(false);
+
   const onLogin = async (username, password) => {
     if (usernameError || passwordError) {
       return;
@@ -137,6 +143,14 @@ export const AuthProvider = ({ children }) => {
         phoneError,
         setPhoneError,
         onSignup,
+        firstName,
+        setfirstName,
+        firstNameError,
+        setfirstNameError,
+        lastName,
+        setlastName,
+        lastNameError,
+        setlastNameError,
       }}
     >
       {children}

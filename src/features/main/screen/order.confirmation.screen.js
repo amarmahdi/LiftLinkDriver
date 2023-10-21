@@ -4,7 +4,7 @@ import styled from "styled-components/native";
 import { OrderConfirmationContext } from "../../../infrastructure/service/confirmation/context/order.confirmation.context";
 import { LabelComponent } from "../../../components/typography/label.component";
 import { Spacer } from "../../../components/utils/spacer.component";
-import { DriverProfileContext } from "../../../infrastructure/service/driver/context/driver.profile.context";
+// import { DriverProfileContext } from "../../../infrastructure/service/driver/context/driver.profile.context";
 import { ButtonComponent } from "../../../components/button.component";
 import ProceedSvg from "../../../../assets/svgs/proceed";
 import { GET_USER_INFO_BY_ID } from "../../../infrastructure/service/query";
@@ -14,6 +14,7 @@ import { format } from "date-fns";
 import { OverlayComponent } from "../../../components/overlay.component";
 import { OrdersContext } from "../../../infrastructure/service/orders/context/orders.context";
 import LogoSvg from "../../../../assets/svgs/logoLoadingIndicator";
+import { DriverContext } from "../../../infrastructure/service/driver/context/driver.context";
 
 const Container = styled.ScrollView`
   flex-direction: column;
@@ -98,7 +99,7 @@ const Chip = styled.View`
 export const OrderConfirmationScreen = ({ navigation, route }) => {
   const { selectedOrder, setSelectedOrder, onConfirmOrder, onDeclineOrder, removeOrder } =
     useContext(OrderConfirmationContext);
-  const { profile } = useContext(DriverProfileContext);
+  const { profile } = useContext(DriverContext);
   const [getCustomerInfo, { data, error: customerInfoError }] = useLazyQuery(
     GET_USER_INFO_BY_ID,
     {

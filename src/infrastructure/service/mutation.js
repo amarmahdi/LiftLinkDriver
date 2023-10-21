@@ -6,6 +6,7 @@ export const Signup = gql`
       token
       user {
         accountType
+        isVerified
         profilePicture {
           pictureId
           pictureLink
@@ -21,6 +22,7 @@ export const Login = gql`
       token
       user {
         accountType
+        isVerified
         profilePicture {
           pictureId
           pictureLink
@@ -46,6 +48,12 @@ export const UPLOAD_PROFILE_PICTURE = gql`
       pictureId
       pictureLink
     }
+  }
+`;
+
+export const UPDATE_NAME = gql`
+  mutation ($lastName: String!, $firstName: String!) {
+    updateName(lastName: $lastName, firstName: $firstName)
   }
 `;
 

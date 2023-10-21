@@ -8,13 +8,14 @@ import {
   ValetContext,
   ValetStatus,
 } from "../../../infrastructure/service/valet/context/valet.context";
-import { DriverProfileContext } from "../../../infrastructure/service/driver/context/driver.profile.context";
+// import { DriverProfileContext } from "../../../infrastructure/service/driver/context/driver.profile.context";
 import { format } from "date-fns";
 import ProceedSvg from "../../../../assets/svgs/proceed";
 import { isObjEmpty } from "../../../features/main/screen/main.screen";
 import { useLazyQuery } from "@apollo/client";
 import { GET_USER_INFO_BY_ID } from "../../../infrastructure/service/query";
 import { Alert } from "react-native";
+import { DriverContext } from "../../../infrastructure/service/driver/context/driver.context";
 
 const AvatarContainer = styled.View`
   flex-direction: row;
@@ -70,7 +71,7 @@ export const ValetInfoScreen = ({ navigation }) => {
     userType,
     startedValet,
   } = useContext(ValetContext);
-  const { profile } = useContext(DriverProfileContext);
+  const { profile } = useContext(DriverContext);
   const [getCustomerInfo, { data, error: customerInfoError }] = useLazyQuery(
     GET_USER_INFO_BY_ID,
     {

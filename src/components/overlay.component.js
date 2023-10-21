@@ -67,6 +67,7 @@ export const OverlayComponent = ({
   onConfirm,
   btnText,
   override = false,
+  style = {},
 }) => {
   return (
     <>
@@ -83,7 +84,7 @@ export const OverlayComponent = ({
           </OverlayContent>
         </Overlay>
       )}
-      {override && <Overlay>{children}</Overlay>}
+      {override && <Overlay style={style}>{children}</Overlay>}
     </>
   );
 };

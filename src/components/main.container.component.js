@@ -5,10 +5,11 @@ import styled from "styled-components/native";
 import Menu from "../../assets/svgs/menu";
 import { AvatarComponent } from "./utils/avatar.component";
 import { Pressable } from "react-native";
-import { DriverProfileContext } from "../infrastructure/service/driver/context/driver.profile.context";
+// import { DriverProfileContext } from "../infrastructure/service/driver/context/driver.profile.context";
 import { isObjEmpty } from "../features/main/screen/main.screen";
 import LogoText from "../../assets/svgs/logo_text";
 import { LabelComponent } from "./typography";
+import { DriverContext } from "../infrastructure/service/driver/context/driver.context";
 
 const BodyTitleSection = styled.View`
   flex-direction: column;
@@ -84,7 +85,7 @@ export const MainContainer = ({
   initial = true,
 }) => {
   const [tabList, setTabList] = useState(null);
-  const { profile } = useContext(DriverProfileContext);
+  const { profile } = useContext(DriverContext);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

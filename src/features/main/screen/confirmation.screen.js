@@ -3,11 +3,12 @@ import styled from "styled-components/native";
 import { ButtonComponent } from "../../../components/button.component";
 import { LabelComponent } from "../../../components/typography";
 import { Spacer } from "../../../components/utils/spacer.component";
-import { DriverProfileContext } from "../../../infrastructure/service/driver/context/driver.profile.context";
+// import { DriverProfileContext } from "../../../infrastructure/service/driver/context/driver.profile.context";
 import ProceedSvg from "../../../../assets/svgs/proceed";
 import { OverlayComponent } from "../../../components/overlay.component";
 import { ConfirmationContext } from "../../../infrastructure/service/confirmation/context/confirmation.context";
 import { format } from "date-fns";
+import { DriverContext } from "../../../infrastructure/service/driver/context/driver.context";
 
 const Container = styled.ScrollView`
   flex-direction: column;
@@ -116,7 +117,7 @@ const ErrorText = styled.Text`
 `;
 
 export const ConfirmationScreen = ({ navigation }) => {
-  const { profile } = useContext(DriverProfileContext);
+  const { profile } = useContext(DriverContext);
   const { confirmation, acceptRequest, rejectRequest } =
     useContext(ConfirmationContext);
   const [date, setDate] = useState(new Date());
