@@ -65,11 +65,13 @@ const Chip = styled.View`
 export const ValetInfoScreen = ({ navigation }) => {
   const {
     selectedValet,
+    setSelectedValet,
     setScreen,
     exists,
     onValetExists,
     userType,
     startedValet,
+    setStartedValet,
   } = useContext(ValetContext);
   const { profile } = useContext(DriverContext);
   const [getCustomerInfo, { data, error: customerInfoError }] = useLazyQuery(
@@ -151,7 +153,7 @@ export const ValetInfoScreen = ({ navigation }) => {
     console.log("selectedValet", selectedValet);
   }, [selectedValet]);
 
-  return (
+  return !isObjEmpty(startedValet) || !isObjEmpty(selectedValet) ? (
     <>
       <Spacer variant="top.large" />
       <LabelComponent>Your Info</LabelComponent>
@@ -258,7 +260,7 @@ export const ValetInfoScreen = ({ navigation }) => {
       <LabelComponent>Customer Location</LabelComponent>
       <Spacer variant="top.medium" />
       <LabelComponent title2={true}>
-        #{selectedValet.order.pickupLocation}
+        #{selectedValet.order.pickupLocation || "N/A"}
       </LabelComponent>
       <Spacer variant="top.large" />
       {userType === "customer" && (
@@ -289,15 +291,9 @@ export const ValetInfoScreen = ({ navigation }) => {
           <Spacer variant="top.medium" />
           <Chip>
             <LabelComponent title2={true}>
-              {startedValet.valetStatus.split("_").join(" ")}
-            </LabelComponent>
-          </Chip>
-          <Spacer variant="top.large" />
-          <LabelComponent>Valet Next Step</LabelComponent>
-          <Spacer variant="top.medium" />
-          <Chip>
-            <LabelComponent title2={true}>
-              {"Wait for the customer to confirm".toUpperCase()}
+              {!isObjEmpty(startedValet)
+                ? startedValet.valetStatus.split("_").join(" ")
+                : selectedValet.valetStatus.split("_").join(" ")}
             </LabelComponent>
           </Chip>
           <Spacer variant="top.large" />
@@ -337,12 +333,18 @@ export const ValetInfoScreen = ({ navigation }) => {
       <ButtonComponent
         title={userType === "customer" ? "Ready to inspect?" : "Next"}
         onPress={() => {
-          if (userType !== "confirm_completion") setScreen("loaner")
-          else navigation.navigate("Home")
+          if (userType !== "confirm_completion") setScreen("loaner");
+          else {
+            navigation.navigate("Home");
+            setSelectedValet({});
+            setStartedValet({});
+          }
         }}
       >
         <ProceedSvg isIcon={true} width={24} height={24} />
       </ButtonComponent>
     </>
+  ) : (
+    <></>
   );
 };

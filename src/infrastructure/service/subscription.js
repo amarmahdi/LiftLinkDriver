@@ -125,3 +125,21 @@ export const GET_ASSIGNED_ORDERS = gql`
     }
   }
 `;
+
+export const GET_DEALERSHIP_REQUESTS = gql`
+  subscription {
+    notifyDriver {
+      confirmationDate
+      confirmationId
+      confirmationStatus
+      dealership {
+        dealershipName
+        dealershipId
+      }
+      updatedAt
+      user {
+        accountType
+      }
+    }
+  }
+`;

@@ -13,9 +13,14 @@ import {
 import { fbApp, fbAuth, fbOtp } from "../../../../firebase-config";
 import { ButtonComponent } from "../../../components/button.component";
 import RedirectIcon from "../../../../assets/svgs/redirect";
-import firebase, { PhoneAuthProvider } from "firebase/auth";
+import firebase, {
+  PhoneAuthProvider,
+  signInWithCredential,
+} from "firebase/auth";
 import { OverlayComponent } from "../../../components/overlay.component";
 import { Keyboard } from "react-native";
+import { DriverContext } from "../../../infrastructure/service/driver/context/driver.context";
+import { screens } from "../driver.screen";
 
 const Container = styled.View`
   flex: 1;
@@ -45,19 +50,19 @@ const PositionedButtonComponent = styled(ButtonComponent)`
 `;
 
 export const DriverPhoneVerificationScreen = ({ navigation }) => {
-  const { phone, setPhone, phoneError, setPhoneError } =
+  const { phone, setPhone, phoneError, setPhoneError, updatePhoneMutation } =
     useContext(AuthContext);
+  const { setScreen } = useContext(DriverContext);
   const recaptchaVerifier = useRef(null);
   const [verificationId, setVerificationId] = useState(null);
   const [message, showMessage] = useState("");
+  const [verificationCode, setVerificationCode] = useState("");
+  const [showCodeVerification, setShowCodeVerification] = useState(false);
 
   useEffect(() => {
-    // if (verificationId) {
-    //   navigation.navigate("DriverPhoneVerificationCodeScreen", {
-    //     verificationId,
-    //   });
-    // }
-    console.log(verificationId, "verificationId");
+    if (verificationId) {
+      setShowCodeVerification(true);
+    }
   }, [verificationId]);
 
   return (
@@ -73,49 +78,99 @@ export const DriverPhoneVerificationScreen = ({ navigation }) => {
           marginTop: "70%",
         }}
       />
-      <Container>
-        <Spacer variant="top.large" />
-        <LabelFormComponent size={"100%"}>Phone</LabelFormComponent>
-        <Spacer variant="top.xsmall" />
-        <InputComponent
-          value={phone}
-          onChangeText={(text) => {
-            if (text.length === 0) {
-              setPhoneError(true);
-            }
-            if (text.length > 0 && phoneError) {
-              setPhoneError(false);
-            }
-            setPhone(text);
-          }}
-          isError={phoneError}
-          placeholder="+1 999 999 9999"
-          autoFocus
-          autoCompleteType="tel"
-          keyboardType="phone-pad"
-          textContentType="telephoneNumber"
-        />
-        {phoneError && <ErrorText>Phone required</ErrorText>}
-        {message ? (
-          <ErrorText>{message}</ErrorText>
-        ) : (
-          <FirebaseRecaptchaBanner />
-        )}
-        <Spacer variant="top.small" />
-        <Spacer variant="top.small" />
-        <ButtonContainer>
-          <PositionedButtonComponent
-            title="Next"
-            onPress={async () => {
-              Keyboard.dismiss();
-              await fbOtp(phone, recaptchaVerifier).then((verificationId) => {
-                setVerificationId(verificationId);
-              });
+      {!showCodeVerification && (
+        <Container>
+          <Spacer variant="top.large" />
+          <LabelFormComponent size={"100%"}>Phone</LabelFormComponent>
+          <Spacer variant="top.xsmall" />
+          <InputComponent
+            value={phone}
+            onChangeText={(text) => {
+              if (text.length === 0) {
+                setPhoneError(true);
+              }
+              if (text.length > 0 && phoneError) {
+                setPhoneError(false);
+              }
+              setPhone(text);
             }}
-            icon={<RedirectIcon width={24} height={24} />}
+            isError={phoneError}
+            placeholder="+1 999 999 9999"
+            autoFocus
+            autoCompleteType="tel"
+            keyboardType="phone-pad"
+            textContentType="telephoneNumber"
           />
-        </ButtonContainer>
-      </Container>
+          {phoneError && <ErrorText>Phone required</ErrorText>}
+          {message ? (
+            <ErrorText>{message}</ErrorText>
+          ) : (
+            <FirebaseRecaptchaBanner />
+          )}
+          <Spacer variant="top.small" />
+          <Spacer variant="top.small" />
+          <ButtonContainer>
+            <PositionedButtonComponent
+              title="Next"
+              onPress={async () => {
+                Keyboard.dismiss();
+                await fbOtp(phone, recaptchaVerifier).then((verificationId) => {
+                  setVerificationId(verificationId);
+                });
+              }}
+              icon={<RedirectIcon width={24} height={24} />}
+            />
+          </ButtonContainer>
+        </Container>
+      )}
+      {showCodeVerification && (
+        <Container>
+          <Spacer variant="top.large" />
+          <LabelFormComponent size={"100%"}>Code</LabelFormComponent>
+          <Spacer variant="top.xsmall" />
+          <InputComponent
+            value={verificationCode}
+            onChangeText={(text) => {
+              setVerificationCode(text);
+            }}
+            placeholder="123456"
+            autoFocus
+            autoCompleteType="tel"
+            keyboardType="phone-pad"
+            textContentType="telephoneNumber"
+          />
+          {message ? (
+            <ErrorText>{message}</ErrorText>
+          ) : (
+            <FirebaseRecaptchaBanner />
+          )}
+          <Spacer variant="top.small" />
+          <Spacer variant="top.small" />
+          <ButtonContainer>
+            <PositionedButtonComponent
+              title="Next"
+              onPress={async () => {
+                Keyboard.dismiss();
+                const credential = PhoneAuthProvider.credential(
+                  verificationId,
+                  verificationCode
+                );
+                await signInWithCredential(fbAuth, credential)
+                  .then(async (result) => {
+                    console.log(result, "from phone verification");
+                    await updatePhoneMutation(phone);
+                    setScreen(screens.names);
+                  })
+                  .catch((error) => {
+                    console.error(error, "from phone verification");
+                    showMessage(error.message);
+                  });
+              }}
+              icon={<RedirectIcon width={24} height={24} />}
+            />
+          </ButtonContainer>
+        </Container>
+      )}
     </>
   );
 };

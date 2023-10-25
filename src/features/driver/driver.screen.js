@@ -15,7 +15,7 @@ import { ButtonComponent } from "../../components/button.component";
 import LogOutIcon from "../../../assets/svgs/logout";
 import { Alert } from "react-native";
 
-const screens = {
+export const screens = {
   profile: "profile",
   phoneVerification: "phoneVerification",
   names: "names",

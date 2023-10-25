@@ -97,8 +97,13 @@ const Chip = styled.View`
 `;
 
 export const OrderConfirmationScreen = ({ navigation, route }) => {
-  const { selectedOrder, setSelectedOrder, onConfirmOrder, onDeclineOrder, removeOrder } =
-    useContext(OrderConfirmationContext);
+  const {
+    selectedOrder,
+    setSelectedOrder,
+    onConfirmOrder,
+    onDeclineOrder,
+    error,
+  } = useContext(OrderConfirmationContext);
   const { profile } = useContext(DriverContext);
   const [getCustomerInfo, { data, error: customerInfoError }] = useLazyQuery(
     GET_USER_INFO_BY_ID,
@@ -108,7 +113,7 @@ export const OrderConfirmationScreen = ({ navigation, route }) => {
       },
     }
   );
-  const { orders, setOrders } = useContext(OrdersContext);
+  const { orders, setOrders, onRemoveOrder } = useContext(OrdersContext);
   const [customerInfos, setCustomerInfos] = useState({});
   const [customerInfoLoading, setCustomerInfoLoading] = useState(true);
   const [showDriverConfirmation, setShowDriverConfirmation] = useState(false);
@@ -135,69 +140,44 @@ export const OrderConfirmationScreen = ({ navigation, route }) => {
   }, [data]);
 
   const onDriverConfirm = async () => {
-    try {
-      setShowDriverConfirmation(false);
-      setLoading(true);
-      await onConfirmOrder(selectedOrder.assignId);
-      setLoading(false);
+    setShowDriverConfirmation(false);
+    setLoading(true);
+    await onConfirmOrder(selectedOrder.assignId);
+    setLoading(false);
+    console.log(selectedOrder, "selectedOrder")
+    if (!error) {
       setShowSuccessModal(true);
-    } catch (error) {
-      // console.error("Error confirming order:", error);
-      setErrorMessage(error.message)
-      if (error.message.toLowercase().includes("accepted")) {
-        removeOrder(selectedOrder.assignId);
-      }
-      setLoading(false);
-      setShowError(true)
+      console.log(selectedOrder.order.orderId, "selectedOrder.order.orderId")
+      onRemoveOrder(selectedOrder.order.orderId);
     }
   };
-  
+
   const onDriverReject = async () => {
-    try {
-      setShowDriverConfirmation(false);
-      setLoading(true);
-      await onDeclineOrder(selectedOrder.assignId);
-      setLoading(false);
+    setShowDriverConfirmation(false);
+    setLoading(true);
+    await onDeclineOrder(selectedOrder.assignId);
+    setLoading(false);
+    if (!error) {
       setShowCancelSuccessModal(true);
-    } catch (error) {
-      // console.error("Error rejecting order:", error);
-      setErrorMessage(error.message)
-      setLoading(false);
-      setShowError(true)
+      onRemoveOrder(selectedOrder.order.orderId);
     }
   };
-  
+
   const onRejectConfirm = async () => {
-    try {
-      setShowCancelConfirmationModal(false);
-      setLoading(true);
-      await onDeclineOrder(selectedOrder.assignId);
-      setLoading(false);
+    setShowCancelConfirmationModal(false);
+    setLoading(true);
+    await onDeclineOrder(selectedOrder.assignId);
+    setLoading(false);
+    if (!error) {
       setShowCancelSuccessModal(true);
-    } catch (error) {
-      // console.error("Error confirming rejection:", error);
-      setErrorMessage(error.message)
-      setLoading(false);
-      setShowError(true)
+      onRemoveOrder(selectedOrder.assignId);
     }
   };
-  
+
   const onClose = async () => {
-    try {
-      setShowCancelSuccessModal(false);
-      setLoading(true);
-      const orderArr = await orders.filter((order) => {
-        return order.assignId !== selectedOrder.assignId;
-      });
-      setOrders(orderArr);
-      setLoading(false);
-      navigation.navigate("Home");
-    } catch (error) {
-      // console.error("Error closing order:", error);
-      setErrorMessage(error.message)
-      setLoading(false);
-      setShowError(true)
-    }
+    setShowCancelSuccessModal(false);
+    onRemoveOrder(selectedOrder.order.orderId);
+    if (!error) navigation.navigate("Home");
   };
 
   const closeModals = () => {
@@ -205,8 +185,16 @@ export const OrderConfirmationScreen = ({ navigation, route }) => {
     setShowCancelConfirmationModal(false);
     setShowCancelSuccessModal(false);
     setShowDriverConfirmation(false);
-    setShowError(false)
-  }
+    setShowError(false);
+  };
+
+  useEffect(() => {
+    if (error) {
+      setErrorMessage(error.message);
+      setLoading(false);
+      setShowError(true);
+    }
+  }, [error]);
 
   return (
     <>
@@ -422,16 +410,16 @@ export const OrderConfirmationScreen = ({ navigation, route }) => {
           btnText={"Return Home"}
         >
           <LabelComponent title={true}>Error!</LabelComponent>
-          <LabelComponent title2={true}>
-            {errorMessage}
-          </LabelComponent>
+          <LabelComponent title2={true}>{errorMessage}</LabelComponent>
         </OverlayComponent>
       )}
-      {loading && <OverlayComponent override={true}>
-        <LogoSvg width={100} height={120} />
-        <Spacer variant="top.large" />
-        <ActivityIndicator animating={true} color={"#FFFFFF"} />
-      </OverlayComponent>}
+      {loading && (
+        <OverlayComponent override={true}>
+          <LogoSvg width={100} height={120} />
+          <Spacer variant="top.large" />
+          <ActivityIndicator animating={true} color={"#FFFFFF"} />
+        </OverlayComponent>
+      )}
     </>
   );
 };

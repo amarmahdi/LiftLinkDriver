@@ -22,6 +22,7 @@ export const OrderConfirmationProvider = ({ children }) => {
   });
   const [error, setError] = useState(null);
   const { setselectedValet } = useContext(ValetContext);
+  const [canLoadMore, setCanLoadMore] = useState(true);
 
   const onConfirmOrder = async (assignId) => {
     setLoading(true);
@@ -33,7 +34,7 @@ export const OrderConfirmationProvider = ({ children }) => {
       setLoading(confirmOrderLoading);
       return data;
     } catch (error) {
-      console.log("error", error.message);
+      console.log("error######", error);
       setError(error.message);
       return;
     }
@@ -63,6 +64,7 @@ export const OrderConfirmationProvider = ({ children }) => {
           ...pagination,
         },
       });
+      console.log(pagination);
       if (data) {
         console.log("data", data);
         if (confirmedOrders.length > 0)
@@ -80,7 +82,9 @@ export const OrderConfirmationProvider = ({ children }) => {
         return;
       }
       if (error) {
-        console.log("error", error.message);
+        if (error.message.includes("No assigned orders found")) {
+          setCanLoadMore(false);
+        }
         throw new Error(error.message);
       }
     } catch (error) {
@@ -112,17 +116,12 @@ export const OrderConfirmationProvider = ({ children }) => {
   }, [error]);
 
   const incrementPage = () => {
-    setPagination({
-      page: pagination.page + 1,
-      perPage: pagination.perPage,
-    });
-  };
-
-  const removeOrder = (assignId) => {
-    const newOrders = confirmedOrders.filter(
-      (order) => order.assignId !== assignId
-    );
-    setConfirmedOrders(newOrders);
+    if (canLoadMore) {
+      setPagination({
+        page: pagination.page + 1,
+        perPage: pagination.perPage,
+      });
+    }
   };
 
   return (
@@ -136,7 +135,6 @@ export const OrderConfirmationProvider = ({ children }) => {
         onGetConfirmedOrders,
         confirmedOrders,
         loading,
-        removeOrder,
         incrementPage,
         error,
         onRefresh,

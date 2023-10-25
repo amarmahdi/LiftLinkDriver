@@ -148,9 +148,12 @@ const pCoords =
 export const MapScreen = ({ navigation }) => {
   let _panel = useRef(null);
   const {
+    screen,
     setScreen,
     selectedValet,
+    setSelectedValet,
     startedValet,
+    setStartedValet,
     valetData,
     userType,
     setUserType,
@@ -194,6 +197,7 @@ export const MapScreen = ({ navigation }) => {
 
   useEffect(() => {
     setPoly();
+    console.log(currentLocation);
   }, []);
 
   // useEffect(() => {
@@ -232,12 +236,38 @@ export const MapScreen = ({ navigation }) => {
       return;
     }
     const location = await Location.getCurrentPositionAsync({});
+
+    Location.watchPositionAsync(
+      {
+        accuracy: Location.Accuracy.BestForNavigation,
+        timeInterval: 1000,
+        distanceInterval: 1,
+      },
+      (location) => {
+        setCurrentLocationTracker({
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude,
+        });
+      }
+    );
+
     setCurrentLocation({
       latitude: location.coords.latitude,
       longitude: location.coords.longitude,
       latitudeDelta: 0.01,
       longitudeDelta: 0.01,
     });
+
+    mapRef.current.setCamera({
+      center: {
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+      },
+      pitch: 45,
+      heading: 90,
+      altitude: 1000,
+    });
+
     return location;
   };
 
@@ -245,9 +275,9 @@ export const MapScreen = ({ navigation }) => {
     if (isObjEmpty(currentLocation)) {
       getLocation();
     }
-    console.log(selectedValet);
+    console.log(selectedValet.order.pickupLocation, "selectedValet");
     if (userType === "dealership")
-      setDestinationLocation(selectedValet.order.pickupLocation);
+      setDestinationLocation(selectedValet.order.pickupLocation + ", Edmonton");
     else if (userType === "customer")
       setDestinationLocation(selectedValet.dealership.dealershipAddress);
     else Alert.alert("Error", "Invalid user type");
@@ -259,22 +289,22 @@ export const MapScreen = ({ navigation }) => {
     }
   }, [currentLocation]);
 
+  const onFinish = async () => {
+    navigation.navigate("Valet");
+  };
+
   useEffect(() => {
-    // prevent the navigator from going back
-    // navigation.addListener("beforeRemove", (e) => {
-    //   e.preventDefault();
-    // });
-    // console.log("startedValet###########", startedValet);
-    // if (
-    //   !isObjEmpty(startedValet) &&
-    //   (startedValet.valetStatus ===
-    //     ValetStatus.DEALERSHIP_TO_CUSTOMER_STARTED ||
-    //     startedValet.valetStatus ===
-    //       ValetStatus.CUSTOMER_TO_DEALERSHIP_STARTED ||
-    //     startedValet.valetStatus === ValetStatus.CUSTOMER_RETURN_STARTED)
-    // ) {
-    //   setStarted(true);
-    // }
+    console.log("startedValet###########", startedValet);
+    if (
+      !isObjEmpty(startedValet) &&
+      (startedValet.valetStatus ===
+        ValetStatus.DEALERSHIP_TO_CUSTOMER_STARTED ||
+        startedValet.valetStatus ===
+          ValetStatus.CUSTOMER_TO_DEALERSHIP_STARTED ||
+        startedValet.valetStatus === ValetStatus.CUSTOMER_RETURN_STARTED)
+    ) {
+      setStarted(true);
+    }
   }, []);
 
   return (
@@ -317,7 +347,7 @@ export const MapScreen = ({ navigation }) => {
               }}
             />
           )}
-          {currentLocationTracker && (
+          {currentLocation && (
             <Marker
               coordinate={{
                 latitude: currentLocationTracker.latitude || 0,
@@ -433,7 +463,7 @@ export const MapScreen = ({ navigation }) => {
                   </LabelComponent>
                   <Spacer variant="top.xsmall" />
                   <LabelComponent inverted={true} title2={true}>
-                    {selectedValet.order.pickupLocation}
+                    {selectedValet.order.pickupLocation || "N/A"}
                   </LabelComponent>
                 </ContentView>
               </ContentContainer>
@@ -485,11 +515,7 @@ export const MapScreen = ({ navigation }) => {
             padding: 0,
             margin: 0,
           }}
-          onSlideStart={() => {
-            // console.log("Slide success");
-          }}
           onSlideEnd={async () => {
-            console.log(startedValet, userType, "selectedValet#############");
             if (!started && userType === "dealership") {
               console.log("DEALERSHIP_TO_CUSTOMER_STARTED");
               await onStartValet(
@@ -497,7 +523,9 @@ export const MapScreen = ({ navigation }) => {
                 selectedValet.valetId || valetData.valetId
               );
               setStarted(true);
-            } else if (userType === "dealership" && started) {
+              return;
+            }
+            if (userType === "dealership" && started) {
               console.log("DEALERSHIP_TO_CUSTOMER_COMPLETED");
               await onStartValet(
                 ValetStatus.DEALERSHIP_TO_CUSTOMER_COMPLETED,
@@ -506,15 +534,17 @@ export const MapScreen = ({ navigation }) => {
               setUserType("customer");
               setStarted(false);
               setScreen("details");
-              navigation.navigate("Valet");
-            } else if (userType === "customer" && !started) {
+            }
+            if (!started && userType === "customer") {
               console.log("CUSTOMER_TO_DEALERSHIP_STARTED");
               await onStartValet(
                 ValetStatus.CUSTOMER_TO_DEALERSHIP_STARTED,
                 selectedValet.valetId || valetData.valetId
               );
               setStarted(true);
-            } else if (userType === "customer" && started) {
+              return;
+            }
+            if (started && userType === "customer") {
               console.log("CUSTOMER_TO_DEALERSHIP_COMPLETED");
               await onStartValet(
                 ValetStatus.CUSTOMER_TO_DEALERSHIP_COMPLETED,
@@ -523,8 +553,8 @@ export const MapScreen = ({ navigation }) => {
               setUserType("confirm_completion");
               setStarted(false);
               setScreen("details");
-              navigation.navigate("Valet");
             }
+            onFinish();
           }}
           autoReset={true}
         />

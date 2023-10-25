@@ -77,7 +77,6 @@ export const ValetProvider = ({ children }) => {
       });
       setStartedValet(data.updateValet);
       console.log("data from start valet", data);
-      // await AsyncStorage.setItem("valet", JSON.stringify(startedValet));
     } catch (error) {
       console.log("error from start valet", error);
       throw error;
@@ -94,7 +93,7 @@ export const ValetProvider = ({ children }) => {
         }
       });
     } catch (error) {
-      console.log("error##########", error.message);
+      console.log("error########## from here", error.message);
       setError(error.message);
     }
   };

@@ -1,6 +1,6 @@
 import React, { useState, createContext, useEffect } from "react";
 import { useLazyQuery, useMutation } from "@apollo/client";
-import { Login, Logout, Signup } from "../../mutation";
+import { Login, Logout, Signup, UPDATE_PHONE } from "../../mutation";
 import { IS_AUTHENTICATED } from "../../query";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -13,9 +13,10 @@ export const AuthProvider = ({ children }) => {
   const [error, setError] = useState(null);
   const [login, { loading: loginLoading }] = useMutation(Login);
   const [isAuthenticatedQuery] = useLazyQuery(IS_AUTHENTICATED);
+  const [updatePhone] = useMutation(UPDATE_PHONE);
   const [logout] = useMutation(Logout);
   const [signup] = useMutation(Signup);
-  const [screen, setScreen] = useState("signup");
+  const [screen, setScreen] = useState("signin");
 
   // Signup/Signin states and functions
   const [username, setUsername] = useState("");
@@ -27,7 +28,7 @@ export const AuthProvider = ({ children }) => {
   const [phone, setPhone] = useState("");
   const [phoneError, setPhoneError] = useState(false);
 
-  // names 
+  // names
   const [firstName, setfirstName] = useState("");
   const [firstNameError, setfirstNameError] = useState(false);
   const [lastName, setlastName] = useState("");
@@ -110,6 +111,19 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const updatePhoneMutation = async (phone) => {
+    try {
+      const { data } = await updatePhone({
+        variables: { phoneNumber: phone },
+      });
+      console.log(data);
+      return data;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  };
+
   useEffect(() => {
     checkAuth();
   }, []);
@@ -151,6 +165,7 @@ export const AuthProvider = ({ children }) => {
         setlastName,
         lastNameError,
         setlastNameError,
+        updatePhoneMutation,
       }}
     >
       {children}

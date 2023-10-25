@@ -394,3 +394,9 @@ export const START_VALET = gql`
     }
   }
 `;
+
+export const UPDATE_PHONE = gql`
+  mutation ($phoneNumber: String!) {
+    updatePhoneNumber(phoneNumber: $phoneNumber)
+  }
+`;

@@ -1,14 +1,11 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components/native";
-import { Card } from "react-native-paper";
-import { DateComponent } from "../typography/date.component";
-import { TimeComponent } from "../typography/time.component";
 import { Spacer } from "./spacer.component";
 import DestinationIcon from "../../../assets/svgs/destinationIcon";
-import PickupIcon from "../../../assets/svgs/pickupIcon";
-import { View } from "react-native";
+import CalendarIcon from "../../../assets/svgs/calendar2";
 import { LabelComponent } from "../typography";
 import { format } from "date-fns";
+import { isObjEmpty } from "../../features/main/screen/main.screen";
 
 const CardItem = styled.TouchableOpacity`
   flex-direction: column;
@@ -77,19 +74,28 @@ const CardPadding = styled.View`
 `;
 
 const LabelContainer = styled.View`
-  width: 80%;
+  width: 100%;
+  padding-right: 10px;
 `;
 
-/* {"
-	__typename": "OrderType", 
-	"assignedTo": [Object], 
-	"customer": [Object], 
-	"orderAddress": "58c417c7-811f-42ea-b709-a9ddbd92e453r", 
-	"orderId": "75141e56-114b-4f25-8827-3374b358953f", 
-	"orderStatus": "Pending", 
-	"orderType": "Service", 
-	"CustomerServiceDate": "2023-07-14"
-}, */
+const Chip = styled.View`
+  padding-top: 2px;
+  padding-bottom: 2px;
+  padding-left: 12px;
+  padding-right: 12px;
+  dipaly: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 40px;
+  background: ${(props) => props.theme.colors.buttonColors.primary};
+`;
+
+const FooterContainer = styled.View`
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+`;
 
 export const CardComponent = ({
   key,
@@ -104,7 +110,17 @@ export const CardComponent = ({
   bordered = false,
   onPress = () => {},
 }) => {
-  console.log("data from card", data);
+  const [showDeliveryDate, setShowDeliveryDate] = useState(false);
+  useEffect(() => {
+    if (data.__typename !== "Valet") {
+      if (!isObjEmpty(data.order) && data.order.orderStatus === "PENDING") {
+        setShowDeliveryDate(true);
+      }
+      if (!isObjEmpty(data.order) && data.order.orderStatus === "INITIATED") {
+        setShowDeliveryDate(true);
+      }
+    }
+  }, []);
   return (
     <CardItem
       key={key}
@@ -128,10 +144,7 @@ export const CardComponent = ({
               </ContentView>
               <ContentView alignItems="flex-end">
                 <LabelComponent inverted={true}>
-                  {format(
-                    new Date(data.order.orderDeliveryDate),
-                    "MMM dd, yyyy"
-                  )}
+                  {format(new Date(data.assignDate || data.createdAt), "hh:mm a MMM dd")}
                 </LabelComponent>
               </ContentView>
             </DateTimeContainer>
@@ -148,7 +161,38 @@ export const CardComponent = ({
                 </LabelContainer>
               </ContentView>
             </ContentContainer>
-            <Spacer variant="top.large" />
+            <Spacer variant="top.medium" />
+            {showDeliveryDate && (
+              <ContentContainer>
+                <CalendarIcon width={36} height={36} />
+                <ContentView>
+                  <LabelComponent inverted={true}>Delivery Date</LabelComponent>
+                  <Spacer variant="top.xsmall" />
+                  <LabelContainer>
+                    <LabelComponent inverted={true} title2={true}>
+                      {format(
+                        new Date(data.order.orderDeliveryDate),
+                        "MMM dd, yyyy"
+                      )}
+                    </LabelComponent>
+                  </LabelContainer>
+                </ContentView>
+              </ContentContainer>
+            )}
+            <Spacer variant="top.medium" />
+            <FooterContainer>
+              <Chip>
+                <LabelComponent inverted={true} title2={true}>
+                  {data.order.orderStatus === "PENDING"
+                    ? "New Order"
+                    : "In Progress"}
+                </LabelComponent>
+              </Chip>
+              <Spacer variant="top.large" />
+              <LabelComponent title2={true} inverted={true}>
+                {data.order.orderId.substring(0, 6).toUpperCase()}
+              </LabelComponent>
+            </FooterContainer>
           </>
         )}
         {overrideChildren && children}

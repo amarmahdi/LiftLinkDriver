@@ -85,9 +85,6 @@ export const ConfirmedOrdersScreen = ({ navigation }) => {
     const isEnd =
       layoutMeasurement.height + contentOffset.y >= contentSize.height;
     setIsEndReached(isEnd);
-    incrementPage();
-    onGetConfirmedOrders();
-    console.log("isEnd", isEnd);
   };
 
   const handleContentSizeChange = (contentWidth, contentHeight) => {
@@ -100,6 +97,7 @@ export const ConfirmedOrdersScreen = ({ navigation }) => {
   const handleEndReached = () => {
     if (isEndReached) {
       onGetConfirmedOrders();
+      incrementPage();
     }
   };
 

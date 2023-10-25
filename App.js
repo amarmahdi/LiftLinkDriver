@@ -87,19 +87,7 @@ const splitLink = split(
 
 const client = new ApolloClient({
   link: authLink.concat(splitLink),
-  cache: new InMemoryCache({
-    typePolicies: {
-      Query: {
-        fields: {
-          paginatedOrders: {
-            merge(existing = [], incoming) {
-              return [...existing, ...incoming];
-            },
-          },
-        },
-      },
-    },
-  }),
+  cache: new InMemoryCache(),
   credentials: "include",
 });
 

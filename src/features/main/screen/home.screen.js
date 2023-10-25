@@ -121,7 +121,7 @@ const DayAndDateLabels = styled.TouchableOpacity`
 const StyledPagerView = styled(PagerView)`
   flex: 1;
   position: absolute;
-  top: ${(props) => (!props.pushDown ? "100" : "350")}px;
+  top: ${(props) => (!props.pushDown ? "100" : "400")}px;
   left: 0;
   right: 0;
   background-color: ${(props) => props.theme.colors.bg.primary};
@@ -147,7 +147,7 @@ const RequestContainer = styled.View`
   justify-content: flex-start;
   align-items: flex-start;
   width: 100%;
-  margin-top: 120px;
+  margin-top: ${(props) => (props.pushDown ? "120" : "100")}px;
 `;
 
 const OrderContainer = styled(CardComponent)`
@@ -182,14 +182,20 @@ export const HomeScreen = ({ navigation }) => {
   } = useContext(ConfirmationContext);
   const {
     orders,
-    onRefresh: refreshOrders,
+    getAllOrders,
     error: ordersFetchError,
+    refreshing: orderRefreshing,
   } = useContext(OrdersContext);
   const { setSelectedOrder: confirmOrder, selectedOrder } = useContext(
     OrderConfirmationContext
   );
-  const { startedValet, onGetStartedValet, setSelectedValet, setUserType, setScreen } =
-    useContext(ValetContext);
+  const {
+    startedValet,
+    onGetStartedValet,
+    setSelectedValet,
+    setUserType,
+    setScreen,
+  } = useContext(ValetContext);
   const [today, setToday] = useState(new Date());
   const [dates, setDates] = useState([]);
   const [selected, setSelected] = useState(false);
@@ -198,6 +204,7 @@ export const HomeScreen = ({ navigation }) => {
   const [dataLoading, setDataLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [orderError, setOrderError] = useState(false);
+  const [orderList, setOrderList] = useState([]);
   const [orderErrorMessage, setOrderErrorMessage] = useState("");
 
   const getDates = () =>
@@ -228,19 +235,20 @@ export const HomeScreen = ({ navigation }) => {
   };
 
   const onRefresh = async () => {
+    console.log("refreshing");
     setRefreshing(true);
+    onGetStartedValet();
+    await getDatas();
     await refreshConfirmation();
-    await refreshOrders();
+    console.log(confirmations)
+    console.log("get all orders is being called");
+    await getAllOrders();
     setRefreshing(false);
   };
 
   useEffect(() => {
-    if (isFocused) {
-      getDatas();
-      onGetStartedValet();
-    }
-    error;
-  }, [isFocused]);
+    onRefresh();
+  }, []);
 
   useEffect(() => {
     if (ordersFetchError) {
@@ -248,6 +256,11 @@ export const HomeScreen = ({ navigation }) => {
       setOrderErrorMessage(ordersFetchError.message);
     }
   }, [ordersFetchError]);
+
+  useEffect(() => {
+    setOrderList(orders);
+    console.log(orders)
+  }, [orders]);
 
   const isSameDay = (d1, d2) =>
     format(d1, "yyyy-MM-dd") === format(d2, "yyyy-MM-dd");
@@ -360,7 +373,7 @@ export const HomeScreen = ({ navigation }) => {
           })}
         </StyledPagerView>
         {dataLoading && refreshing && (
-          <RequestContainer>
+          <RequestContainer pushDown={!isObjEmpty(startedValet)}>
             <ListCard>
               <ListComponent>
                 <CarDescription>
@@ -371,7 +384,7 @@ export const HomeScreen = ({ navigation }) => {
           </RequestContainer>
         )}
         {confirmations.length > 0 && !dataLoading && !refreshing && (
-          <RequestContainer>
+          <RequestContainer pushDown={!isObjEmpty(startedValet)}>
             <LabelComponent>Dealership Request Notification</LabelComponent>
             <Spacer variant="top.large" />
             {confirmations.map((item) => {
@@ -405,25 +418,30 @@ export const HomeScreen = ({ navigation }) => {
             })}
           </RequestContainer>
         )}
-        {orders.length === 0 && !dataLoading && !refreshing && orderError && (
-          <NoOrderContainer>
-            <NoOrderImg
-              source={require("../../../../assets/emptyIndicator.png")}
-              resizeMode="contain"
-            />
-            <Spacer variant="top.large" />
-            <LabelComponent title={true}>No order(s)</LabelComponent>
-            <Spacer variant="top.medium" />
-            <LabelComponent
-              styles={{
-                textAlign: "center",
-                width: "80%",
-              }}
-            >
-              You can view an order in your order list after it has been added.
-            </LabelComponent>
-          </NoOrderContainer>
-        )}
+        {orders.length === 0 &&
+          !dataLoading &&
+          !refreshing &&
+          !orderRefreshing &&
+          orderError && (
+            <NoOrderContainer>
+              <NoOrderImg
+                source={require("../../../../assets/emptyIndicator.png")}
+                resizeMode="contain"
+              />
+              <Spacer variant="top.large" />
+              <LabelComponent title={true}>No order(s)</LabelComponent>
+              <Spacer variant="top.medium" />
+              <LabelComponent
+                styles={{
+                  textAlign: "center",
+                  width: "80%",
+                }}
+              >
+                You can view an order in your order list after it has been
+                added.
+              </LabelComponent>
+            </NoOrderContainer>
+          )}
         {orders.length > 0 && !dataLoading && !refreshing && (
           <TopSpacer none={!confirmations.length > 0}>
             <LabelComponent title={true}>New Order(s)</LabelComponent>
@@ -439,12 +457,7 @@ export const HomeScreen = ({ navigation }) => {
                     confirmOrder(item);
                     navigation.navigate("ConfirmOrder");
                   }}
-                >
-                  <Image
-                    source={require("../../../../assets/emptyIndicator.png")}
-                    resizeMode="contain"
-                  />
-                </OrderContainer>
+                />
               </>
             ))}
           </TopSpacer>
