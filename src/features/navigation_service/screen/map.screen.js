@@ -27,6 +27,7 @@ import { format } from "date-fns";
 import MapViewDirections from "react-native-maps-directions";
 import set from "date-fns/fp/set/index.js";
 import { DriverContext } from "../../../infrastructure/service/driver/context/driver.context";
+import { theme } from "../../../infrastructure/theme";
 
 const BottomOverflowContainer = styled.View`
   width: 100%;
@@ -158,6 +159,7 @@ export const MapScreen = ({ navigation }) => {
     userType,
     setUserType,
     onStartValet,
+    onChangeLocation,
   } = useContext(ValetContext);
   const { profile } = useContext(DriverContext);
   const [loading, setLoading] = useState(true);
@@ -248,6 +250,11 @@ export const MapScreen = ({ navigation }) => {
           latitude: location.coords.latitude,
           longitude: location.coords.longitude,
         });
+        onChangeLocation({
+          valetId: selectedValet.valetId || valetData.valetId,
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude,
+        })
       }
     );
 
@@ -314,6 +321,8 @@ export const MapScreen = ({ navigation }) => {
           ref={mapRef}
           style={{ flex: 1 }}
           initialRegion={currentLocation}
+          customMapStyle={theme.customMapStyle}
+          provider="google"
         >
           {!loadingLocation && (
             <MapViewDirections

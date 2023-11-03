@@ -1,7 +1,7 @@
 import React, { createContext, useState, useEffect } from "react";
-import { useMutation } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import { useLazyQuery } from "@apollo/client";
-import { CREATE_VALET, START_VALET } from "../../mutation";
+import { CREATE_VALET, SEND_LOCATION, START_VALET } from "../../mutation";
 import { VALET_EXISTS, GET_STARTED_VALET } from "../../query";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -30,13 +30,15 @@ export const ValetProvider = ({ children }) => {
   const [selectedValet, setSelectedValet] = useState({});
   const [createValet, { loading }] = useMutation(CREATE_VALET);
   const [startValet, { data: startValetData }] = useMutation(START_VALET);
+  const [sendLocation] = useMutation(SEND_LOCATION);
   const [valetData, setValetData] = useState({});
   const [valetExists, { data }] = useLazyQuery(VALET_EXISTS);
   const [exists, setExists] = useState(false);
   const [error, setError] = useState(null);
   const [userType, setUserType] = useState("dealership");
-  const [getAllStartedDriverValets, { data: selectedValetData }] =
-    useLazyQuery(GET_STARTED_VALET);
+  const getAllStartedDriverValets = useQuery(GET_STARTED_VALET, {
+    fetchPolicy: "network-only",
+  });
 
   const onValetExists = async (orderId) => {
     try {
@@ -85,8 +87,11 @@ export const ValetProvider = ({ children }) => {
 
   const onGetStartedValet = async () => {
     try {
-      await getAllStartedDriverValets().then(({ data }) => {
-        console.log("data from get all started valet", data.getAllStartedDriverValets[0]);
+      await getAllStartedDriverValets.refetch().then(({ data }) => {
+        console.log(
+          "data from get all started valet",
+          data.getAllStartedDriverValets[0]
+        );
         if (data) {
           setStartedValet(data.getAllStartedDriverValets[0]);
           console.log("selected valet########", data);
@@ -95,6 +100,21 @@ export const ValetProvider = ({ children }) => {
     } catch (error) {
       console.log("error########## from here", error.message);
       setError(error.message);
+    }
+  };
+
+  const onChangeLocation = async ({ valetId, latitude, longitude }) => {
+    try {
+      await sendLocation({
+        variables: {
+          valetId: valetId,
+          latitude: latitude,
+          longitude: longitude,
+        },
+      });
+    } catch (error) {
+      console.log("error from location", error);
+      throw error;
     }
   };
 
@@ -120,6 +140,7 @@ export const ValetProvider = ({ children }) => {
         onCreateValet,
         onValetExists,
         setStartedValet,
+        onChangeLocation,
         setSelectedValet,
         onGetStartedValet,
       }}

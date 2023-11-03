@@ -9,6 +9,7 @@ import { Pressable } from "react-native";
 import { isObjEmpty } from "../features/main/screen/main.screen";
 import LogoText from "../../assets/svgs/logo_text";
 import { LabelComponent } from "./typography";
+import BackIcon from "../../assets/svgs/back";
 import { DriverContext } from "../infrastructure/service/driver/context/driver.context";
 
 const BodyTitleSection = styled.View`
@@ -83,6 +84,8 @@ export const MainContainer = ({
   styles,
   isLoading = true,
   initial = true,
+  secondaryPage = false,
+  navigation,
 }) => {
   const [tabList, setTabList] = useState(null);
   const { profile } = useContext(DriverContext);
@@ -120,6 +123,11 @@ export const MainContainer = ({
               )}
             </BodyTitleSection>
           </>
+        )}
+        {secondaryPage && (
+          <Pressable onPress={() => navigation.goBack()}>
+            <BackIcon width={32} height={32} />
+          </Pressable>
         )}
 
         {showAvatar && !loading && (

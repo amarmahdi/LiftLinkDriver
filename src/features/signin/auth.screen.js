@@ -30,6 +30,7 @@ const ButtonContainer = styled.View`
   width: 100%;
   padding-left: 30px;
   padding-right: 30px;
+  margin-bottom: 20px;
 `;
 
 export const AuthScreen = ({ navigation }) => {
@@ -123,8 +124,9 @@ export const AuthScreen = ({ navigation }) => {
                 await handleLogin();
             }}
             loading={loadingState}
-          />
-          <LogOutIcon width={24} height={24} />
+          >
+            <LogOutIcon width={24} height={24} />
+          </ButtonComponent>
         </ButtonContainer>
       )}
       {screen === "signup" && (
@@ -145,8 +147,9 @@ export const AuthScreen = ({ navigation }) => {
               )
                 await onSignup(username, password, email);
             }}
-          />
-          <LogOutIcon width={24} height={24} />
+          >
+            <LogOutIcon width={24} height={24} />
+          </ButtonComponent>
         </ButtonContainer>
       )}
     </MainContainer>

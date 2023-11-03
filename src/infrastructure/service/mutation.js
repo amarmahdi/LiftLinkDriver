@@ -400,3 +400,17 @@ export const UPDATE_PHONE = gql`
     updatePhoneNumber(phoneNumber: $phoneNumber)
   }
 `;
+
+export const SEND_LOCATION = gql`
+  mutation ($longitude: Float!, $latitude: Float!, $valetId: String!) {
+    sendDriversLocation(
+      longitude: $longitude
+      latitude: $latitude
+      valetId: $valetId
+    ) {
+      id
+      latitude
+      longitude
+    }
+  }
+`;

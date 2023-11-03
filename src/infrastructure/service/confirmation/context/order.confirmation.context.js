@@ -1,5 +1,5 @@
 import React, { createContext, useEffect, useState, useContext } from "react";
-import { useMutation, useLazyQuery } from "@apollo/client";
+import { useMutation, useLazyQuery, useQuery } from "@apollo/client";
 import { CONFIRM_ORDER, REJECT_ORDER } from "../../mutation";
 import { GET_CONFIRMED_ORDERS, GET_STARTED_VALET } from "../../query";
 import { ValetContext } from "../../valet/context/valet.context";
@@ -11,7 +11,9 @@ export const OrderConfirmationProvider = ({ children }) => {
     useMutation(CONFIRM_ORDER);
   const [declineOrder, { loading: declineOrderLoading }] =
     useMutation(REJECT_ORDER);
-  const [getConfrmedOrders, { refetch }] = useLazyQuery(GET_CONFIRMED_ORDERS);
+  const getConfrmedOrders = useQuery(GET_CONFIRMED_ORDERS, {
+    fetchPolicy: "network-only",
+  });
   const [order, setOrder] = useState(null);
   const [confirmedOrders, setConfirmedOrders] = useState([]);
   const [selectedOrder, setSelectedOrder] = useState(null);
@@ -59,10 +61,8 @@ export const OrderConfirmationProvider = ({ children }) => {
   const onGetConfirmedOrders = async () => {
     setLoading(true);
     try {
-      const { data, error } = await getConfrmedOrders({
-        variables: {
-          ...pagination,
-        },
+      const { data, error } = await getConfrmedOrders.refetch({
+        ...pagination,
       });
       console.log(pagination);
       if (data) {
@@ -88,7 +88,7 @@ export const OrderConfirmationProvider = ({ children }) => {
         throw new Error(error.message);
       }
     } catch (error) {
-      console.log("error", error.message);
+      console.log("error from get confirmed orders", error.message);
       setError(error.message);
       setLoading(false);
       return;

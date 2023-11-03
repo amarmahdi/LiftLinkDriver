@@ -29,12 +29,12 @@ import { OrdersProvider } from "./src/infrastructure/service/orders/context/orde
 import { SERVER_URL } from "@env";
 
 // AsyncStorage.clear();
-const tunnel = false;
+const tunnel = true;
 
 const wsLink = new GraphQLWsLink(
   createClient({
     url: tunnel
-      ? "wss://ef50-198-161-203-4.ngrok-free.app/graphql/"
+      ? "wss://d253-198-161-203-4.ngrok-free.app/graphql/"
       : "http://192.168.1.94:8000/graphql/",
     on: {
       connected: () => console.log("ws connected"),
@@ -59,7 +59,7 @@ const wsLink = new GraphQLWsLink(
 
 const httpLink = createHttpLink({
   uri: tunnel
-    ? "https://ef50-198-161-203-4.ngrok-free.app/graphql/"
+    ? "https://d253-198-161-203-4.ngrok-free.app/graphql/"
     : "http://192.168.1.94:8000/graphql/",
 });
 

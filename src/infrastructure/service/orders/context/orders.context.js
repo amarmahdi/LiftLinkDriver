@@ -11,7 +11,7 @@ import { GET_ASSIGNED_ORDERS } from "../../subscription";
 export const OrdersContext = createContext();
 
 export const OrdersProvider = ({ children }) => {
-  const [getOrders, { data, loading, error: err }] = useLazyQuery(GET_ORDERS);
+  // const [getOrders, { data, loading, error: err }] = useLazyQuery(GET_ORDERS);
   const [orders, setOrders] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState(null);
@@ -23,9 +23,10 @@ export const OrdersProvider = ({ children }) => {
 
   const getAllOrders = async () => {
     setOrders([]);
+    console.log("get all orders");
     try {
       setRefreshing(true);
-      await orderData.refetch();
+      await orderData.refetch();    
       setOrders(await orderData.data.getUnconfirmedOrders);
       setError(null);
     } catch (err) {
@@ -61,12 +62,12 @@ export const OrdersProvider = ({ children }) => {
     }
   }, [orderData.error]);
 
-  useEffect(() => {
-    if (err) {
-      console.log("error", err.message);
-      setError(err.message);
-    }
-  }, [err]);
+  // useEffect(() => {
+  //   if (err) {
+  //     console.log("error", err.message);
+  //     setError(err.message);
+  //   }
+  // }, [err]);
 
   const onRemoveOrder = async (orderId) => {
     const newOrders = orders.filter((order) => {
@@ -84,9 +85,8 @@ export const OrdersProvider = ({ children }) => {
   return (
     <OrdersContext.Provider
       value={{
-        getOrders,
-        data,
-        loading,
+        // data,
+        // loading,
         error,
         orders,
         setOrders,

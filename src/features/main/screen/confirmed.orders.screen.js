@@ -103,7 +103,7 @@ export const ConfirmedOrdersScreen = ({ navigation }) => {
 
   return (
     <>
-      <MainContainer showAvatar={true} showMenu={true}>
+      <MainContainer showAvatar={true} secondaryPage={true} navigation={navigation}>
         <HomeContainer
           ref={scrollViewRef}
           onScroll={handleScroll}

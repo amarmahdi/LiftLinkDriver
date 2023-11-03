@@ -175,7 +175,6 @@ const ButtonContainer = styled.View`
 export const HomeScreen = ({ navigation }) => {
   const { profile } = useContext(DriverContext);
   const {
-    getRequests,
     error,
     setConfirmation,
     onRefresh: refreshConfirmation,
@@ -224,24 +223,17 @@ export const HomeScreen = ({ navigation }) => {
     setDataLoading(true);
     const d = getDates();
     setDates(d);
-    await getRequests()
-      .then(({ data }) => {
-        setConfirmations(data.getConfirmation);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
     setDataLoading(false);
   };
 
   const onRefresh = async () => {
     console.log("refreshing");
     setRefreshing(true);
-    onGetStartedValet();
-    await getDatas();
-    await refreshConfirmation();
+    await onGetStartedValet(); //
+    await getDatas(); //
+    await refreshConfirmation(); //
     console.log(confirmations)
-    console.log("get all orders is being called");
+    console.log("get all orders is being called>>>>>>>>>>>>>>>>>>>>");
     await getAllOrders();
     setRefreshing(false);
   };

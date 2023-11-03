@@ -1,5 +1,5 @@
 import React, { useState, createContext, useEffect } from "react";
-import { useLazyQuery, useMutation } from "@apollo/client";
+import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
 import { Login, Logout, Signup, UPDATE_PHONE } from "../../mutation";
 import { IS_AUTHENTICATED } from "../../query";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -12,7 +12,7 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [login, { loading: loginLoading }] = useMutation(Login);
-  const [isAuthenticatedQuery] = useLazyQuery(IS_AUTHENTICATED);
+  const isAuthenticatedQuery = useQuery(IS_AUTHENTICATED);
   const [updatePhone] = useMutation(UPDATE_PHONE);
   const [logout] = useMutation(Logout);
   const [signup] = useMutation(Signup);
@@ -92,7 +92,8 @@ export const AuthProvider = ({ children }) => {
       if (token) {
         const {
           data: { isLoggedIn },
-        } = await isAuthenticatedQuery();
+          error,
+        } = await isAuthenticatedQuery.refetch();
         if (isLoggedIn) {
           setIsAuthenticated(true);
           setError(null);
@@ -101,9 +102,15 @@ export const AuthProvider = ({ children }) => {
           setError(null);
           AsyncStorage.clear();
         }
+        console.log("isLoggedIn######", isLoggedIn);
+        if (error) {
+          setIsAuthenticated(false);
+          setError(error);
+          console.log("error from auth", error.message);
+        }
       }
     } catch (error) {
-      // console.error("Error checking authentication:", error);
+      console.error("Error checking authentication:", error);
       setIsAuthenticated(false);
       setError(error);
     } finally {

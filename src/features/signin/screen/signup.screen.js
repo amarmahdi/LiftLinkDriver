@@ -57,7 +57,7 @@ export const SignupScreen = ({ navigation }) => {
       <Container>
         <Spacer variant="top.large" />
         <LabelFormComponent size={"100%"}>Username</LabelFormComponent>
-        <Spacer variant="top.xsmall" />
+        <Spacer variant="top.small" />
         <InputComponent
           value={username}
           onChangeText={(text) => {
@@ -72,10 +72,9 @@ export const SignupScreen = ({ navigation }) => {
           isError={usernameError}
         />
         {usernameError && <ErrorText>Username required</ErrorText>}
-        <Spacer variant="top.small" />
-        <Spacer variant="top.small" />
+        <Spacer variant="top.medium" />
         <LabelFormComponent size={"100%"}>Email</LabelFormComponent>
-        <Spacer variant="top.xsmall" />
+        <Spacer variant="top.small" />
         <InputComponent
           value={email}
           onChangeText={(text) => {
@@ -90,10 +89,9 @@ export const SignupScreen = ({ navigation }) => {
           isError={emailError}
         />
         {emailError && <ErrorText>Email required</ErrorText>}
-        <Spacer variant="top.small" />
-        <Spacer variant="top.small" />
+        <Spacer variant="top.medium" />
         <LabelFormComponent>Password</LabelFormComponent>
-        <Spacer variant="top.xsmall" />
+        <Spacer variant="top.small" />
         <InputComponent
           value={password}
           onChangeText={(text) => {
@@ -110,9 +108,6 @@ export const SignupScreen = ({ navigation }) => {
         />
         {passwordError && <ErrorText>Password Required</ErrorText>}
         <Spacer variant="top.xsmall" />
-        <LabelFormComponent size="small">Forgot Password?</LabelFormComponent>
-        <Spacer variant="top.medium" />
-        <Spacer variant="top.medium" />
       </Container>
     </>
   );
