@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect, useContext } from "react";
-import { useLazyQuery, useMutation } from "@apollo/client";
+import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
 import { GET_USER_INFO } from "../../query";
 import { UPDATE_NAME } from "../../mutation";
 import { AuthContext } from "../../authentication/context/auth.context";
@@ -10,23 +10,25 @@ export const DriverProvider = ({ children }) => {
   const [screen, setScreen] = useState("phoneVerification");
   const [profile, setProfile] = useState({});
   const [loading, setLoading] = useState(true);
-  const [getUserData, { data, loading: loadingDriver, error: errorDriver }] =
-    useLazyQuery(GET_USER_INFO);
+  const [errorDriver, setErrorDriver] = useState(null);
+  const getUserData = useQuery(GET_USER_INFO, {
+    fetchPolicy: "network-only",
+  });
   const [updateName] = useMutation(UPDATE_NAME);
-  const {firstName, lastName} = useContext(AuthContext);
+  const { firstName, lastName } = useContext(AuthContext);
 
-  const importUserData = async () => {
-    if (!loadingDriver && data) {
-      const profilePicture =
-        Object.keys(data.getUserInfo.profilePicture).length > 0
-          ? data.getUserInfo.profilePicture[0]
-          : {};
-      console.log(data)
-      data.getUserInfo.car ?? (data.getUserInfo.car = {});
-      const modifiedUserInfo = { ...data.getUserInfo, profilePicture };
-      setProfile(modifiedUserInfo);
-    }
-  };
+  // const importUserData = async () => {
+  //   if (!loadingDriver && data) {
+  //     const profilePicture =
+  //       Object.keys(data.getUserInfo.profilePicture).length > 0
+  //         ? data.getUserInfo.profilePicture[0]
+  //         : {};
+  //     console.log(data);
+  //     data.getUserInfo.car ?? (data.getUserInfo.car = {});
+  //     const modifiedUserInfo = { ...data.getUserInfo, profilePicture }; 
+  //     setProfile(modifiedUserInfo);
+  //   }
+  // };
 
   const updateNames = async () => {
     try {
@@ -44,26 +46,53 @@ export const DriverProvider = ({ children }) => {
     }
   };
 
-
-  useEffect(() => {
-    if (data) {
-      importUserData();
+  const onGetUserData = async () => {
+    setLoading(true);
+    try {
+      const { data } = await getUserData.refetch();
+      if (data && data.getUserInfo) {
+        const profilePicture = data.getUserInfo.profilePicture[0];
+        data.getUserInfo.profilePicture = profilePicture;
+        setProfile(data.getUserInfo);
+      } else {
+        throw new Error("No user data found");
+      }
+    } catch (error) {
+      setErrorDriver(`Failed to fetch user data: ${error.message}`);
+    } finally {
+      setLoading(false);
     }
-  }, [data]);
+  };
 
-  useEffect(() => {
-    if (errorDriver) {
-      // console.error(errorDriver);
-    }
-  }, [errorDriver]);
+  // useEffect(() => {
+  //   if (data) {
+  //     importUserData();
+  //   }
+  // }, [data]);
 
-  useEffect(() => {
-    setLoading(loadingDriver);
-  }, [loadingDriver]);
+  // useEffect(() => {
+  //   if (errorDriver) {
+  //     // console.error(errorDriver);
+  //   }
+  // }, [errorDriver]);
+
+  // useEffect(() => {
+  //   setLoading(loadingDriver);
+  // }, [loadingDriver]);
 
   return (
     <DriverContext.Provider
-      value={{ profile, setProfile, loading, getUserData, screen, setScreen, updateNames }}
+      value={{
+        profile,
+        setProfile,
+        loading,
+        onGetUserData,
+        screen,
+        setScreen,
+        updateNames,
+        errorDriver,
+        setErrorDriver,
+      }}
     >
       {children}
     </DriverContext.Provider>

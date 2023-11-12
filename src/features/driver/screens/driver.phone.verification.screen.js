@@ -162,7 +162,7 @@ export const DriverPhoneVerificationScreen = ({ navigation }) => {
                     setScreen(screens.names);
                   })
                   .catch((error) => {
-                    console.error(error, "from phone verification");
+                    // console.error(error, "from phone verification");
                     showMessage(error.message);
                   });
               }}
@@ -171,6 +171,8 @@ export const DriverPhoneVerificationScreen = ({ navigation }) => {
           </ButtonContainer>
         </Container>
       )}
+      <Spacer variant="top.large" />
+      <Spacer variant="top.large" />
     </>
   );
 };

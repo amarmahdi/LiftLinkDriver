@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from "react";
 import styled from "styled-components/native";
-import { Alert, Pressable } from "react-native";
+import { Alert, KeyboardAvoidingView, Pressable } from "react-native";
 import { AuthContext } from "../../infrastructure/service/authentication/context/auth.context";
 import { MainContainer } from "../../components/main.container.component";
 import { SigninScreen } from "./screen/signin.screen";
@@ -9,6 +9,7 @@ import { ButtonComponent } from "../../components/button.component";
 import LogOutIcon from "../../../assets/svgs/logout";
 import { Spacer } from "../../components/utils/spacer.component";
 import { SignupScreen } from "./screen/signup.screen";
+import { isObjEmpty } from "../main/screen/main.screen";
 
 const ScrollView = styled.ScrollView`
   flex: 1;
@@ -35,6 +36,7 @@ const ButtonContainer = styled.View`
 
 export const AuthScreen = ({ navigation }) => {
   const {
+    user,
     loading,
     error,
     setError,
@@ -55,20 +57,20 @@ export const AuthScreen = ({ navigation }) => {
   } = useContext(AuthContext);
   const [loadingState, setLoadingState] = useState(true);
 
-  useEffect(() => {
-    if (isAuthenticated) {
-      navigation.navigate("MainNavigation");
-    }
-  }, [isAuthenticated]);
-
   const handleLogin = async () => {
     try {
-      const data = await onLogin(username, password);
-      console.log("data", data);
+      await onLogin(username, password);
     } catch (error) {
       setError(error);
     }
   };
+
+  useEffect(() => {
+    console.log("user from auth screen>>>>>>>>>>>>>", user);
+    if (!isObjEmpty(user)) {
+      navigation.navigate("MainNavigation");
+    }
+  }, [user]);
 
   useEffect(() => {
     if (!loading) {
@@ -94,25 +96,30 @@ export const AuthScreen = ({ navigation }) => {
 
   return (
     <MainContainer showLogo={true} showGreetings={true}>
-      <ScrollView>
-        <LabelContainer>
-          <LabelComponent title={true}>
-            {screen === "signin" ? "Sign In" : "Sign Up"}
-          </LabelComponent>
-          <Pressable
-            onPress={() => {
-              setScreen(screen === "signin" ? "signup" : "signin");
-            }}
-          >
-            <LabelComponent dateTitle={true}>
-              {screen === "signin" ? "Sign Up" : "Sign In"}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={{ flex: 1, width: "100%", height: "100%" }}
+      >
+        <ScrollView>
+          <LabelContainer>
+            <LabelComponent title={true}>
+              {screen === "signin" ? "Sign In" : "Sign Up"}
             </LabelComponent>
-          </Pressable>
-        </LabelContainer>
-        <Spacer variant={"top.large"} />
-        {screen === "signin" && <SigninScreen navigation={navigation} />}
-        {screen === "signup" && <SignupScreen navigation={navigation} />}
-      </ScrollView>
+            <Pressable
+              onPress={() => {
+                setScreen(screen === "signin" ? "signup" : "signin");
+              }}
+            >
+              <LabelComponent dateTitle={true}>
+                {screen === "signin" ? "Sign Up" : "Sign In"}
+              </LabelComponent>
+            </Pressable>
+          </LabelContainer>
+          <Spacer variant={"top.large"} />
+          {screen === "signin" && <SigninScreen navigation={navigation} />}
+          {screen === "signup" && <SignupScreen navigation={navigation} />}
+        </ScrollView>
+      </KeyboardAvoidingView>
       {screen === "signin" && (
         <ButtonContainer>
           <ButtonComponent

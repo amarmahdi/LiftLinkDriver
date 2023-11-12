@@ -74,7 +74,7 @@ const CardPadding = styled.View`
 `;
 
 const LabelContainer = styled.View`
-  width: 100%;
+  width: 90%;
   padding-right: 10px;
 `;
 
@@ -111,6 +111,7 @@ export const CardComponent = ({
   onPress = () => {},
 }) => {
   const [showDeliveryDate, setShowDeliveryDate] = useState(false);
+  console.log(data.order, "data from card component>>>>>>>>>>>>>>");
   useEffect(() => {
     if (data.__typename !== "Valet") {
       if (!isObjEmpty(data.order) && data.order.orderStatus === "PENDING") {
@@ -183,9 +184,7 @@ export const CardComponent = ({
             <FooterContainer>
               <Chip>
                 <LabelComponent inverted={true} title2={true}>
-                  {data.order.orderStatus === "PENDING"
-                    ? "New Order"
-                    : "In Progress"}
+                  {data.order.orderStatus.split("_").join(" ")}
                 </LabelComponent>
               </Chip>
               <Spacer variant="top.large" />

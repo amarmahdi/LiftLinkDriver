@@ -4,6 +4,7 @@ import { useLazyQuery } from "@apollo/client";
 import { CREATE_VALET, SEND_LOCATION, START_VALET } from "../../mutation";
 import { VALET_EXISTS, GET_STARTED_VALET } from "../../query";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { isObjEmpty } from "../../../../features/main/screen/main.screen";
 
 export const ValetContext = createContext();
 
@@ -27,27 +28,27 @@ export const ValetStatus = {
 export const ValetProvider = ({ children }) => {
   const [screen, setScreen] = useState("details");
   const [startedValet, setStartedValet] = useState({});
+  const [startLoading, setStartLoading] = useState(false);
   const [selectedValet, setSelectedValet] = useState({});
   const [createValet, { loading }] = useMutation(CREATE_VALET);
   const [startValet, { data: startValetData }] = useMutation(START_VALET);
   const [sendLocation] = useMutation(SEND_LOCATION);
   const [valetData, setValetData] = useState({});
-  const [valetExists, { data }] = useLazyQuery(VALET_EXISTS);
+  const valetExists = useQuery(VALET_EXISTS);
   const [exists, setExists] = useState(false);
   const [error, setError] = useState(null);
   const [userType, setUserType] = useState("dealership");
-  const getAllStartedDriverValets = useQuery(GET_STARTED_VALET, {
+  const getAllStartedValets = useQuery(GET_STARTED_VALET, {
     fetchPolicy: "network-only",
   });
 
   const onValetExists = async (orderId) => {
+    console.log("order id from valet exists", orderId);
     try {
-      await valetExists({ variables: { orderId: orderId } }).then(
-        ({ data }) => {
-          setExists(data.valetExists);
-        }
-      );
-      console.log("data from valet exists", data);
+      await valetExists.refetch({ orderId: orderId }).then(({ data }) => {
+        setExists(data.valetExists);
+        console.log("data from valet exists", data);
+      });
     } catch (error) {
       console.log("error from valet exists", error);
       setError(error);
@@ -72,34 +73,40 @@ export const ValetProvider = ({ children }) => {
   };
 
   const onStartValet = async (state, valetId, inputs = null) => {
-    console.log(state, valetId, inputs, "$$$$$$$$$$$$$$$$$$$");
+    setStartLoading(true);
     try {
       const { data } = await startValet({
         variables: { state: state, valetId: valetId, inputs: inputs },
       });
-      setStartedValet(data.updateValet);
-      console.log("data from start valet", data);
+
+      if (!isObjEmpty(data) && !isObjEmpty(data.updateValet)) {
+        setStartedValet(data.updateValet);
+      } else {
+        throw new Error("No valet data found");
+      }
     } catch (error) {
-      console.log("error from start valet", error);
+      console.error(`Failed to start valet: ${error.message}`);
       throw error;
+    } finally {
+      setStartLoading(false);
     }
   };
 
   const onGetStartedValet = async () => {
     try {
-      await getAllStartedDriverValets.refetch().then(({ data }) => {
-        console.log(
-          "data from get all started valet",
-          data.getAllStartedDriverValets[0]
-        );
-        if (data) {
-          setStartedValet(data.getAllStartedDriverValets[0]);
-          console.log("selected valet########", data);
-        }
-      });
+      const {
+        data: { getAllStartedDriverValets },
+      } = await getAllStartedValets.refetch();
+      if (
+        !isObjEmpty(getAllStartedDriverValets) &&
+        getAllStartedDriverValets.length > 0
+      ) {
+        setStartedValet(getAllStartedDriverValets[0]);
+      } else {
+        throw new Error("No started valets found");
+      }
     } catch (error) {
-      console.log("error########## from here", error.message);
-      setError(error.message);
+      setError(`Failed to fetch started valets: ${error.message}`);
     }
   };
 

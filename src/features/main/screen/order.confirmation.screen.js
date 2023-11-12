@@ -144,10 +144,8 @@ export const OrderConfirmationScreen = ({ navigation, route }) => {
     setLoading(true);
     await onConfirmOrder(selectedOrder.assignId);
     setLoading(false);
-    console.log(selectedOrder, "selectedOrder")
     if (!error) {
       setShowSuccessModal(true);
-      console.log(selectedOrder.order.orderId, "selectedOrder.order.orderId")
       onRemoveOrder(selectedOrder.order.orderId);
     }
   };

@@ -254,7 +254,7 @@ export const MapScreen = ({ navigation }) => {
           valetId: selectedValet.valetId || valetData.valetId,
           latitude: location.coords.latitude,
           longitude: location.coords.longitude,
-        })
+        });
       }
     );
 
@@ -471,9 +471,11 @@ export const MapScreen = ({ navigation }) => {
                     Pickup Location
                   </LabelComponent>
                   <Spacer variant="top.xsmall" />
-                  <LabelComponent inverted={true} title2={true}>
-                    {selectedValet.order.pickupLocation || "N/A"}
-                  </LabelComponent>
+                  {!isObjEmpty(selectedValet) && (
+                    <LabelComponent inverted={true} title2={true}>
+                      {selectedValet.order.pickupLocation || "N/A"}
+                    </LabelComponent>
+                  )}
                 </ContentView>
               </ContentContainer>
               <Spacer variant="top.large" />

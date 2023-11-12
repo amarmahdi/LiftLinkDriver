@@ -336,8 +336,6 @@ export const ValetInfoScreen = ({ navigation }) => {
           if (userType !== "confirm_completion") setScreen("loaner");
           else {
             navigation.navigate("Home");
-            setSelectedValet({});
-            setStartedValet({});
           }
         }}
       >

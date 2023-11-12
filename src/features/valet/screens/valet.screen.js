@@ -30,7 +30,7 @@ export const ValetScreen = ({ navigation }) => {
           </ValetContainer>
         )}
         {screen === "loaner" && (
-          <MainContainer>
+          <MainContainer showAvatar={true} secondaryPage={true} navigation={navigation}>
             <ValetLoanerScreen navigation={navigation} />
           </MainContainer>
         )}

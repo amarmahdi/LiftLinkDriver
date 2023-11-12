@@ -44,17 +44,25 @@ export const MainScreen = ({ navigation }) => {
   const {
     profile,
     loading: userContextLoading,
-    getUserData,
+    onGetUserData,
   } = useContext(DriverContext);
   const [loading, setLoading] = useState(true);
 
   const userdata = async () => {
-    await getUserData();
+    if (isObjEmpty(profile)) {
+      await onGetUserData();
+    } else {
+      setLoading(false);
+      changePage();
+    }
     console.log(profile, "profile");
   };
 
   const changePage = async () => {
-    if (!profile.isVerified || isObjEmpty(profile.profilePicture) && !userContextLoading) {
+    if (
+      !profile.isVerified ||
+      (isObjEmpty(profile.profilePicture) && !userContextLoading)
+    ) {
       navigation.navigate("Profile");
     } else {
       navigation.navigate("Home");

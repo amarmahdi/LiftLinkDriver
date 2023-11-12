@@ -71,8 +71,8 @@ export const SigninScreen = ({ navigation }) => {
         {passwordError && <ErrorText>Password Required</ErrorText>}
         <Spacer variant="top.xsmall" />
         <LabelFormComponent size="small">Forgot Password?</LabelFormComponent>
-        <Spacer variant="top.medium" />
-        <Spacer variant="top.medium" />
+        <Spacer variant="top.large" />
+        <Spacer variant="top.large" />
       </Container>
     </>
   );

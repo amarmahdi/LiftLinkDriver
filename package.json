@@ -12,23 +12,22 @@
   },
   "dependencies": {
     "@apollo/client": "^3.7.17",
+    "@expo/config-plugins": "~6.0.2",
     "@googlemaps/polyline-codec": "^1.0.28",
     "@mapbox/polyline": "^1.2.1",
     "@react-native-async-storage/async-storage": "1.17.11",
     "@react-native-community/blur": "^4.3.2",
     "@react-native-community/datetimepicker": "6.7.3",
-    "@react-native-firebase/app": "^18.5.0",
     "@react-navigation/native": "^6.1.7",
     "@react-navigation/stack": "^6.3.17",
     "@rneui/base": "^4.0.0-rc.7",
     "@rneui/themed": "^4.0.0-rc.8",
     "@shopify/react-native-skia": "0.1.172",
-    "@types/react-native": "^0.70.14",
     "apollo-boost": "^0.4.9",
     "apollo-link-ws": "^1.0.20",
     "date-fns": "^2.30.0",
     "expo": "~48.0.18",
-    "expo-build-properties": "^0.8.3",
+    "expo-build-properties": "~0.6.0",
     "expo-file-system": "~15.2.2",
     "expo-firebase-recaptcha": "^2.3.1",
     "expo-font": "~11.1.1",
@@ -42,7 +41,7 @@
     "react": "18.2.0",
     "react-content-loader": "^6.2.1",
     "react-dom": "18.2.0",
-    "react-native": "0.71.13",
+    "react-native": "0.71.14",
     "react-native-dotenv": "^3.4.9",
     "react-native-elements": "^3.4.3",
     "react-native-gesture-handler": "~2.9.0",
@@ -63,8 +62,7 @@
     "rn-fetch-blob": "^0.10.13",
     "rn-slide-button": "^1.0.3",
     "rn-sliding-up-panel": "^2.4.6",
-    "styled-components": "^6.0.7",
-    "subscriptions-transport-ws": "^0.9.18"
+    "styled-components": "^6.0.7"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
@@ -75,5 +73,10 @@
     "eslint-plugin-promise": "^6.1.1",
     "eslint-plugin-react": "^7.32.2"
   },
-  "private": true
+  "private": true,
+  "resolutions": {
+    "@expo/config-plugins": "~6.0.0",
+    "@expo/prebuild-config": "~6.0.0",
+    "expo-modules-autolinking": "~1.1.0"
+  }
 }

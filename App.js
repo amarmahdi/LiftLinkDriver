@@ -34,8 +34,8 @@ const tunnel = true;
 const wsLink = new GraphQLWsLink(
   createClient({
     url: tunnel
-      ? "wss://d253-198-161-203-4.ngrok-free.app/graphql/"
-      : "http://192.168.1.94:8000/graphql/",
+      ? "ws://178.128.224.133/graphql/"
+      : "ws://172.20.10.2:8000/graphql/",
     on: {
       connected: () => console.log("ws connected"),
       error: (e) => console.log("ws error", e),
@@ -59,8 +59,8 @@ const wsLink = new GraphQLWsLink(
 
 const httpLink = createHttpLink({
   uri: tunnel
-    ? "https://d253-198-161-203-4.ngrok-free.app/graphql/"
-    : "http://192.168.1.94:8000/graphql/",
+    ? "http://178.128.224.133/graphql/"
+    : "http://172.20.10.2:8000/graphql/",
 });
 
 const authLink = setContext(async ({ headers }) => {

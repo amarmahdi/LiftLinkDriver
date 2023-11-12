@@ -2,7 +2,7 @@
 import React, { useEffect, useState, useContext } from "react";
 import { LabelComponent as Label } from "../../../components/typography/label.component";
 // import { MainContainer } from "../../../components/main.container.component";
-import { Alert, ScrollView } from "react-native";
+import { Alert, KeyboardAvoidingView, ScrollView } from "react-native";
 import { Spacer } from "../../../components/utils/spacer.component";
 import { CamCardComponent } from "../components/camera.card.component";
 import { ButtonComponent } from "../../../components/button.component";
@@ -25,6 +25,7 @@ import UploadProgress from "../../../../assets/svgs/upload_progress";
 import { OverlayComponent } from "../../../components/overlay.component";
 import LogoSvg from "../../../../assets/svgs/logoLoadingIndicator";
 import { DriverContext } from "../../../infrastructure/service/driver/context/driver.context";
+import { Platform } from "react-native";
 
 const Container = styled.View`
   flex-direction: column;
@@ -283,7 +284,7 @@ export const ValetLoanerScreen = ({ navigation }) => {
         mileage: 1000,
       };
 
-      // console.log(startedValet, "userType##########");
+      console.log(datas, "datas>>>>>>>>>>>##########");
 
       if (userType === "dealership") await onCreateValet(datas);
       if (userType === "customer")
@@ -327,93 +328,102 @@ export const ValetLoanerScreen = ({ navigation }) => {
 
   return (
     <>
-      <ScrollViewContainer>
-        <Container
-          styles={{
-            flexDirection: "column",
-            justifyContent: "flex-start",
-            alignItems: "flex-start",
-          }}
-        ></Container>
-        <>
-          <UploadProgress />
-          <Spacer variant="top.large" />
-          <Label title2={true}>Loaner Car: All Side Picture</Label>
-          <Spacer variant="top.medium" />
-          <ScrollView>
-            <>
-              <Spacer variant="top.large" />
-              <Label title2={true}>Front</Label>
-              <Spacer variant="top.small" />
-              <CamCardComponent side={"front"} />
-              {/* <StyledText>{progressFront}</StyledText> */}
-              <ErrorMessage>
-                {fimgError ? "Please take a picture" : ""}
-              </ErrorMessage>
-              <Spacer variant="top.large" />
-              <Label title2={true}>Right</Label>
-              <Spacer variant="top.small" />
-              <CamCardComponent side={"right"} />
-              {/* <StyledText>{progressRight}</StyledText> */}
-              <ErrorMessage>
-                {rimgError ? "Please take a picture" : ""}
-              </ErrorMessage>
-              <Spacer variant="top.large" />
-              <Label title2={true}>Back</Label>
-              <Spacer variant="top.small" />
-              <CamCardComponent side={"back"} />
-              {/* <StyledText>{progressBack}</StyledText> */}
-              <ErrorMessage>
-                {bimgError ? "Please take a picture" : ""}
-              </ErrorMessage>
-              <Spacer variant="top.large" />
-              <Label title2={true}>Left</Label>
-              <Spacer variant="top.small" />
-              <CamCardComponent side={"left"} />
-              {/* <StyledText>{progressLeft}</StyledText> */}
-              <ErrorMessage>
-                {limgError ? "Please take a picture" : ""}
-              </ErrorMessage>
-              <Spacer variant="top.large" />
-              <LabelFormComponent size={"100%"}>Car Mileage</LabelFormComponent>
-              <Spacer variant="top.small" />
-              <InputComponent
-                placeholder="Enter Car Mileage"
-                onChangeText={(e) => setMileage(e)}
-              />
-              <Spacer variant="top.small" />
-              <ErrorMessage>
-                {mileage === "" && mileageError ? "This field is required" : ""}
-              </ErrorMessage>
-              <Spacer variant="top.large" />
-              <LabelFormComponent size={"100%"}>Gas Level</LabelFormComponent>
-              <Spacer variant="top.small" />
-              <InputComponent
-                placeholder="Enter Gas Level"
-                onChangeText={(e) => setGasLevel(e)}
-              />
-              <Spacer variant="top.small" />
-              <ErrorMessage>
-                {gasLevel === "" && gasLevelError
-                  ? "This field is required"
-                  : ""}
-              </ErrorMessage>
-              <Spacer variant="top.large" />
-              <LabelFormComponent size={"100%"}>Comments</LabelFormComponent>
-              <Spacer variant="top.small" />
-              <TextInput
-                placeholder="Enter Comments"
-                onChangeText={(e) => setComments(e)}
-                multiline
-                height={300}
-              />
-              <Spacer variant="top.small" />
-            </>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={{ flex: 1, width: "100%" }}
+      >
+        <ScrollViewContainer>
+          <Container
+            styles={{
+              flexDirection: "column",
+              justifyContent: "flex-start",
+              alignItems: "flex-start",
+            }}
+          ></Container>
+          <>
+            <UploadProgress />
             <Spacer variant="top.large" />
-          </ScrollView>
-          <Spacer variant="top.large" />
-        </>
-      </ScrollViewContainer>
+            <Label title2={true}>Loaner Car: All Side Picture</Label>
+            <Spacer variant="top.medium" />
+            <ScrollView>
+              <>
+                <Spacer variant="top.large" />
+                <Label title2={true}>Front</Label>
+                <Spacer variant="top.small" />
+                <CamCardComponent side={"front"} />
+                {/* <StyledText>{progressFront}</StyledText> */}
+                <ErrorMessage>
+                  {fimgError ? "Please take a picture" : ""}
+                </ErrorMessage>
+                <Spacer variant="top.large" />
+                <Label title2={true}>Right</Label>
+                <Spacer variant="top.small" />
+                <CamCardComponent side={"right"} />
+                {/* <StyledText>{progressRight}</StyledText> */}
+                <ErrorMessage>
+                  {rimgError ? "Please take a picture" : ""}
+                </ErrorMessage>
+                <Spacer variant="top.large" />
+                <Label title2={true}>Back</Label>
+                <Spacer variant="top.small" />
+                <CamCardComponent side={"back"} />
+                {/* <StyledText>{progressBack}</StyledText> */}
+                <ErrorMessage>
+                  {bimgError ? "Please take a picture" : ""}
+                </ErrorMessage>
+                <Spacer variant="top.large" />
+                <Label title2={true}>Left</Label>
+                <Spacer variant="top.small" />
+                <CamCardComponent side={"left"} />
+                {/* <StyledText>{progressLeft}</StyledText> */}
+                <ErrorMessage>
+                  {limgError ? "Please take a picture" : ""}
+                </ErrorMessage>
+                <Spacer variant="top.large" />
+                <LabelFormComponent size={"100%"}>
+                  Car Mileage
+                </LabelFormComponent>
+                <Spacer variant="top.small" />
+                <InputComponent
+                  placeholder="Enter Car Mileage"
+                  onChangeText={(e) => setMileage(e)}
+                />
+                <Spacer variant="top.small" />
+                <ErrorMessage>
+                  {mileage === "" && mileageError
+                    ? "This field is required"
+                    : ""}
+                </ErrorMessage>
+                <Spacer variant="top.large" />
+                <LabelFormComponent size={"100%"}>Gas Level</LabelFormComponent>
+                <Spacer variant="top.small" />
+                <InputComponent
+                  placeholder="Enter Gas Level"
+                  onChangeText={(e) => setGasLevel(e)}
+                />
+                <Spacer variant="top.small" />
+                <ErrorMessage>
+                  {gasLevel === "" && gasLevelError
+                    ? "This field is required"
+                    : ""}
+                </ErrorMessage>
+                <Spacer variant="top.large" />
+                <LabelFormComponent size={"100%"}>Comments</LabelFormComponent>
+                <Spacer variant="top.small" />
+                <TextInput
+                  placeholder="Enter Comments"
+                  onChangeText={(e) => setComments(e)}
+                  multiline
+                  height={300}
+                />
+                <Spacer variant="top.small" />
+              </>
+              <Spacer variant="top.large" />
+            </ScrollView>
+            <Spacer variant="top.large" />
+          </>
+        </ScrollViewContainer>
+      </KeyboardAvoidingView>
       <ButtonContainer>
         <ButtonComponent title="Next" onPress={() => uploadImages()} />
       </ButtonContainer>

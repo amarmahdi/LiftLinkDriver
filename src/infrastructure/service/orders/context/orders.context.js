@@ -26,8 +26,14 @@ export const OrdersProvider = ({ children }) => {
     console.log("get all orders");
     try {
       setRefreshing(true);
-      await orderData.refetch();    
-      setOrders(await orderData.data.getUnconfirmedOrders);
+      await orderData.refetch();
+      const orderD = await orderData.data.getUnconfirmedOrders;
+      const orders = orderD.map((order) => {
+        const orderObj = order.order[0];
+        order = { ...order, order: orderObj };
+        return order;
+      });
+      setOrders(orders);
       setError(null);
     } catch (err) {
       console.log("error##########", err.message);
@@ -37,38 +43,6 @@ export const OrdersProvider = ({ children }) => {
     }
   };
 
-  useEffect(() => {
-    setOrders([]);
-    getAllOrders();
-  }, []);
-
-  useEffect(() => {
-    if (orderData.loading) {
-      setRefreshing(true);
-      console.log("loading");
-    }
-    if (!orderData.loading) {
-      setRefreshing(false);
-      console.log("not loading");
-    }
-  }, [orderData.loading]);
-
-  useEffect(() => {
-    if (orderData.error) {
-      console.log("orderData.error", orderData.error);
-      setError(orderData.error.message);
-      setRefreshing(false);
-      1;
-    }
-  }, [orderData.error]);
-
-  // useEffect(() => {
-  //   if (err) {
-  //     console.log("error", err.message);
-  //     setError(err.message);
-  //   }
-  // }, [err]);
-
   const onRemoveOrder = async (orderId) => {
     const newOrders = orders.filter((order) => {
       return order.order.orderId !== orderId;
@@ -77,8 +51,14 @@ export const OrdersProvider = ({ children }) => {
   };
 
   useEffect(() => {
+    console.log("order data", orders);
+  }, [orders]);
+
+  useEffect(() => {
     if (assignedOrderSubscription) {
-      setOrders([assignedOrderSubscription.orderAssigned, ...orders]);
+      const order = assignedOrderSubscription.orderAssigned.order[0];
+      const orderObj = { ...assignedOrderSubscription.orderAssigned, order };
+      setOrders([orderObj, ...orders]);
     }
   }, [assignedOrderSubscription]);
 

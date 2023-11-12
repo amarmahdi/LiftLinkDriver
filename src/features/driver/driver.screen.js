@@ -13,7 +13,8 @@ import { isObjEmpty } from "../main/screen/main.screen";
 import { LabelComponent } from "../../components/typography";
 import { ButtonComponent } from "../../components/button.component";
 import LogOutIcon from "../../../assets/svgs/logout";
-import { Alert } from "react-native";
+import { Alert, KeyboardAvoidingView } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
 
 export const screens = {
   profile: "profile",
@@ -80,29 +81,36 @@ export const DriverScreen = ({ children, navigation }) => {
   return (
     <ImageContainerProvider>
       <MainContainer showAvatar={false} showLogo={true}>
-        <LabelContainer>
-          <LabelComponent title2={true}>
-            Enter the required information mentioned down below.
-          </LabelComponent>
-        </LabelContainer>
-        {loading && (
-          <LoaderContainer>
-            <LogoLoadingIndicator width={100} height={100} />
-          </LoaderContainer>
-        )}
-        {!loading && (
-          <>
-            {screen === screens.phoneVerification && (
-              <DriverPhoneVerificationScreen navigation={navigation} />
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          style={{ flex: 1, width: "100%" }}
+        >
+          <ScrollView>
+            <LabelContainer>
+              <LabelComponent title2={true}>
+                Enter the required information mentioned down below.
+              </LabelComponent>
+            </LabelContainer>
+            {loading && (
+              <LoaderContainer>
+                <LogoLoadingIndicator width={100} height={100} />
+              </LoaderContainer>
             )}
-            {screen === screens.names && (
-              <DriverInfoScreen navigation={navigation} />
+            {!loading && (
+              <>
+                {screen === screens.phoneVerification && (
+                  <DriverPhoneVerificationScreen navigation={navigation} />
+                )}
+                {screen === screens.names && (
+                  <DriverInfoScreen navigation={navigation} />
+                )}
+                {screen === screens.profile && (
+                  <DriverProfileScreen navigation={navigation} />
+                )}
+              </>
             )}
-            {screen === screens.profile && (
-              <DriverProfileScreen navigation={navigation} />
-            )}
-          </>
-        )}
+          </ScrollView>
+        </KeyboardAvoidingView>
       </MainContainer>
       {screen === "names" && (
         <ButtonContainer>

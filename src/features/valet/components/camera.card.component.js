@@ -100,7 +100,7 @@ export const CamCardComponent = ({ imageLink, _key, clearContainer, side }) => {
     }
     try {
       let result = await ImagePicker.launchCameraAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: false,
         aspect: [4, 3],
         quality: 1,
@@ -154,7 +154,7 @@ export const CamCardComponent = ({ imageLink, _key, clearContainer, side }) => {
         height: "250px",
         width: "100%",
       }}
-      onPress={pickImage}
+      onPress={takeImage}
     >
       <CustomCard>
         {image && !imageLink && side ? (

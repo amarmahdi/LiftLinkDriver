@@ -194,6 +194,7 @@ export const HomeScreen = ({ navigation }) => {
     setSelectedValet,
     setUserType,
     setScreen,
+    setStartedValet,
   } = useContext(ValetContext);
   const [today, setToday] = useState(new Date());
   const [dates, setDates] = useState([]);
@@ -227,13 +228,12 @@ export const HomeScreen = ({ navigation }) => {
   };
 
   const onRefresh = async () => {
-    console.log("refreshing");
+    setSelectedValet({});
+    setStartedValet({});
     setRefreshing(true);
-    await onGetStartedValet(); //
-    await getDatas(); //
-    await refreshConfirmation(); //
-    console.log(confirmations)
-    console.log("get all orders is being called>>>>>>>>>>>>>>>>>>>>");
+    await onGetStartedValet();
+    await getDatas();
+    await refreshConfirmation();
     await getAllOrders();
     setRefreshing(false);
   };
@@ -251,7 +251,6 @@ export const HomeScreen = ({ navigation }) => {
 
   useEffect(() => {
     setOrderList(orders);
-    console.log(orders)
   }, [orders]);
 
   const isSameDay = (d1, d2) =>
@@ -268,6 +267,7 @@ export const HomeScreen = ({ navigation }) => {
       showAvatar={true}
       showMenu={true}
       imageUrl={profile.profilePicture.pictureLink}
+      navigation={navigation}
     >
       <HomeContainer
         refreshControl={

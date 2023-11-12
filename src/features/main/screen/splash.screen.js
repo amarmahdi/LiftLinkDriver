@@ -6,6 +6,8 @@ import { Spacer } from "../../../components/utils/spacer.component";
 import { ButtonComponent } from "../../../components/button.component";
 import { AuthContext } from "../../../infrastructure/service/authentication/context/auth.context";
 import { Alert } from "react-native";
+import { isObjEmpty } from "./main.screen";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Container = styled.View`
   flex: 1;
@@ -50,51 +52,43 @@ const LabelContainer = styled.View`
 `;
 
 export const Splash = ({ navigation }) => {
-  const {
-    isAuthenticated,
-    loading: authLoading,
-    err,
-  } = useContext(AuthContext);
-  const { profile, loading, getUserData } = useContext(DriverContext);
-  const [loadingState, setLoadingState] = useState(true);
+  // const {
+  //   isAuthenticated,
+  //   loading: authLoading,
+  //   err,
+  // } = useContext(AuthContext);
+  const { profile, loading, onGetUserData, errorDriver } =
+    useContext(DriverContext);
 
   useEffect(() => {
-    if (!loading && !authLoading && !err) {
-      setLoadingState(false);
-      changeScreen();
-    }
-  }, [loading, authLoading]);
+    const fetchData = async () => {
+      await onGetUserData();
+    };
 
-  useEffect(() => {
-    if (err) {
-      setLoadingState(false);
-      Alert.alert("Alert!", "Internal Server Error. Please try again.");
-    }
-  }, [err]);
-
-  const handleGetStarted = async () => {
-    console.log("isAuthenticated loading", authLoading);
-    await getUserData();
-    if (!loading && !authLoading && !err) {
-      changeScreen();
-    }
-  };
-
-  const changeScreen = () => {
-    if (isAuthenticated && Object.keys(profile).length !== 0) {
-      setTimeout(() => {
-        navigation.navigate("MainNavigation");
-      }, 2000);
-    } else if (!isAuthenticated && Object.keys(profile).length === 0 && !err) {
-      setTimeout(() => {
-        navigation.navigate("AuthNavigation");
-      }, 2000);
-    }
-  };
-
-  useEffect(() => {
-    handleGetStarted();
+    fetchData();
   }, []);
+
+  useEffect(() => {
+    console.log("loading>>>>>>>>>>>>>>>", loading);
+    if (!loading) {
+      if (!isObjEmpty(profile)) {
+        setTimeout(() => {
+          if (profile.accountType !== "driver") {
+            AsyncStorage.clear();
+            navigation.navigate("Auth");
+            return;
+          }
+          navigation.navigate("MainNavigation");
+        }, 2000);
+      }
+      if (errorDriver) {
+        setTimeout(() => {
+          console.log("denied");
+          navigation.navigate("Auth");
+        }, 2000);
+      }
+    }
+  }, [loading]);
 
   return (
     <Container>
@@ -126,10 +120,10 @@ export const Splash = ({ navigation }) => {
         </LabelComponent>
         <Spacer variant="top.large" />
         <Spacer variant="top.large" />
-        <ButtonComponent
+        {/* <ButtonComponent
           title="Get Started"
           onPress={async () => await handleGetStarted()}
-        />
+        /> */}
       </LabelContainer>
     </Container>
   );

@@ -69,9 +69,9 @@ export const DriverInfoScreen = ({ navigation }) => {
           isError={lastNameError}
         />
         {lastNameError && <ErrorText>Last name required</ErrorText>}
-        <Spacer variant="top.medium" />
-        <Spacer variant="top.medium" />
       </Container>
+      <Spacer variant="top.large" />
+      <Spacer variant="top.large" />
     </>
   );
 };

@@ -49,7 +49,7 @@ const uploadToFirebase = async (blob, path, onProgress) => {
         onProgress && onProgress(progress);
       },
       (error) => {
-        console.error("Error uploading file to Firebase:", error);
+        // console.error("Error uploading file to Firebase:", error);
         reject(error);
       },
       async () => {

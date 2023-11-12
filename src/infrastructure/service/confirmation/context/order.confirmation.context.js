@@ -60,6 +60,12 @@ export const OrderConfirmationProvider = ({ children }) => {
 
   const onGetConfirmedOrders = async () => {
     setLoading(true);
+    if (confirmedOrders.length === 0) {
+      setPagination({
+        page: 1,
+        perPage: 10,
+      });
+    }
     try {
       const { data, error } = await getConfrmedOrders.refetch({
         ...pagination,
@@ -71,13 +77,22 @@ export const OrderConfirmationProvider = ({ children }) => {
           setConfirmedOrders((prev) => {
             let newOrders = [];
             data.getConfirmedOrders.forEach((newOrder) => {
+              const odr = newOrder.order[0];
+              newOrder.order = odr;
               if (!prev.some((order) => order.assignId === newOrder.assignId)) {
                 newOrders.push(newOrder);
               }
             });
             return [...prev, ...newOrders];
           });
-        else setConfirmedOrders(data.getConfirmedOrders);
+        else {
+          const orders = data.getConfirmedOrders.map((newOrder) => {
+            const odr = newOrder.order[0];
+            newOrder.order = odr;
+            return newOrder;
+          });
+          setConfirmedOrders(orders);
+        }
         setLoading(false);
         return;
       }

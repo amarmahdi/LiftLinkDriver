@@ -11,6 +11,7 @@ import LogoText from "../../assets/svgs/logo_text";
 import { LabelComponent } from "./typography";
 import BackIcon from "../../assets/svgs/back";
 import { DriverContext } from "../infrastructure/service/driver/context/driver.context";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const BodyTitleSection = styled.View`
   flex-direction: column;
@@ -137,7 +138,14 @@ export const MainContainer = ({
             imageUrl={profile.profilePicture.pictureLink}
           />
         )}
-        {showMenu && <Menu width={32} height={32} />}
+        {showMenu && (
+          <Pressable onPress={() => {
+            AsyncStorage.clear();
+            navigation.navigate("Auth");
+          }}>
+            <Menu width={32} height={32} />
+          </Pressable>
+        )}
         {showTab && (
           <TabsContainer>
             {tabList &&
